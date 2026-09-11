@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+.env
+.env.*
+node_modules/
+dist/
+*.zip
+*.crx
+tests/
+examples/
