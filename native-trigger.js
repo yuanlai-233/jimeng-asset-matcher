@@ -99,7 +99,7 @@
   }
 
   function candidateScore(element, editor, exactButtons) {
-    if (!element || element.id === buttonId || !plugin.isVisible(element)) {
+    if (!element || element.id === buttonId || element.closest?.('[data-jimeng-bgm]') || !plugin.isVisible(element)) {
       return -Infinity;
     }
     const nearToolbar = nearEditorToolbar(element, editor);
@@ -145,7 +145,7 @@
     return best || document;
   }
 
-  function findNativeButton(editor, { scopeRoot = null } = {}) {
+  function findNativeButton(editor, { scopeRoot = null, toolbarOnly = false } = {}) {
     if (plugin.canvas?.formFor(editor)) return plugin.canvas.referenceButton(editor);
     const queryRoot = scopeRoot?.querySelectorAll ? scopeRoot : document;
     const exactButtons = new Set(
@@ -176,6 +176,7 @@
 
     return Array.from(new Set(controls))
       .filter((element) => !scopeRoot || scopeRoot.contains?.(element))
+      .filter((element) => !toolbarOnly || !editor?.contains?.(element))
       .map((element) => ({ element, score: candidateScore(element, editor, exactButtons) }))
       .filter((item) => Number.isFinite(item.score))
       .sort((a, b) => b.score - a.score)[0]?.element || null;

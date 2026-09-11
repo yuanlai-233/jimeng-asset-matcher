@@ -436,6 +436,7 @@
 
   function isSendCandidate(element, editorRect) {
     if (!document.contains(element) || !plugin.isVisible(element) ||
+      element.closest?.('[data-jimeng-bgm]') ||
       (element.id === buttonId || element.id === localUploadButtonId ||
         element.id === helpButtonId) ||
       element.closest(`#${confirmId}, #${extraConfirmId}, #${onboardingId}`)) {
@@ -501,11 +502,14 @@
     return null;
   }
 
-  function resolveActiveComposerContext(editor = resolveMatchStatusEditor()) {
+  function resolveActiveComposerContext(editor = resolveMatchStatusEditor(), { allowDisabledSend = false } = {}) {
     if (!editor) return null;
     const sendButton = findSendButton(editor);
-    if (!isActiveCreationComposer(editor, sendButton)) return null;
-    const nativeAtButton = plugin.nativeTrigger?.findNativeButton?.(editor) || null;
+    const active = isActiveCreationComposer(editor, sendButton);
+    if (!active && !(allowDisabledSend && sendButton?.disabled &&
+      unobscured(plugin.canvas?.editorArea(editor) || editor))) return null;
+    const nativeAtButton = plugin.nativeTrigger?.findNativeButton?.(editor, { toolbarOnly: true }) || null;
+    if (!active && !unobscured(nativeAtButton)) return null;
     const canvasForm = plugin.canvas?.formFor(editor);
     if (canvasForm && nativeAtButton && canvasForm.contains(nativeAtButton)) {
       return { composerRoot: canvasForm, editor, nativeAtButton, sendButton };
@@ -635,9 +639,9 @@
       return;
     }
     setControlsVisibility(controls, false);
-    if (!indicator || !button) return;
     const context = preferredContext || resolveActiveComposerContext();
-    if (!context) return;
+    plugin.bgm?.mount(context || resolveActiveComposerContext(undefined, { allowDisabledSend: true }));
+    if (!indicator || !button || !context) return;
     const { composerRoot, editor, nativeAtButton, sendButton } = context;
     const uploadButton = document.getElementById(localUploadButtonId);
     if (uploadButton) uploadButton.style.removeProperty("display");
@@ -680,6 +684,7 @@
 
   function setMatchControlsBusy(active) {
     matchControlsSuppressed = Boolean(active);
+    plugin.bgm?.render();
     const controls = document.getElementById(controlsId);
     if (matchControlsSuppressed) {
       if (controls) setControlsVisibility(controls, false);
@@ -1284,6 +1289,10 @@
   // Both Enter and the black arrow require an explicit second click.
   function showConfirmation(editor, sendButton) {
     if (document.getElementById(confirmId)) return;
+    if (plugin.bgm?.flush(editor) === false) {
+      toast("背景音乐设置未写入，请等输入结束后重试。", "warning");
+      return;
+    }
     const snapshot = evaluateMatchStatus(editor, { refreshContent: true });
     const remaining = snapshot.remaining || [];
     const warnings = [];

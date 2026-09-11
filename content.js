@@ -404,6 +404,7 @@
 
     const editor = plugin.editor.findEditor();
     if (!editor) throw new Error("没有找到提示词输入框");
+    plugin.bgm?.flush(editor);
     const prompt = plugin.editor.plainText(editor);
     if (!matcher.normalizeText(prompt)) throw new Error("提示词是空的");
     const syntaxErrors = matcher.promptReferenceErrors(prompt);
@@ -749,6 +750,8 @@
   // remains visible; only slots without an adjacent native mention are handled.
   async function runMatching(button, preferredEditor = null) {
     if (plugin.state.matching || plugin.state.localUploading) return;
+    const bgmEditor = plugin.editor.findEditor();
+    if (!preferredEditor || preferredEditor === bgmEditor) plugin.bgm?.flush(bgmEditor);
     const verifiedBeforeRun = plugin.state.matchStatusVerified;
     const verifiedEditorBeforeRun = plugin.state.matchStatusEditor;
     plugin.state.matching = true;
@@ -1058,6 +1061,7 @@
   const editorSelector =
     '[data-slate-editor="true"], [contenteditable="true"][role="textbox"], [contenteditable="true"]';
   const ignoredPluginSelector = [
+    '[data-jimeng-bgm]',
     `#${plugin.constants.buttonId}`,
     `#${plugin.constants.confirmId}`,
     `#${plugin.constants.controlsId}`,
@@ -1137,6 +1141,7 @@
       isWithin(mutation.target, editorSelector) ||
       changedNodes(mutation).some((node) => contains(node, editorSelector))
     );
+    if (contentDirty) plugin.bgm?.schedule();
     const trackedEditor = plugin.state.matchStatusEditor;
     const materialsDirty = relevant.some((mutation) =>
       (!trackedEditor || !mutationTouchesEditor(mutation, trackedEditor)) && (

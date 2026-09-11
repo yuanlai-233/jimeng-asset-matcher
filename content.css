@@ -562,3 +562,46 @@
 #jimeng-match-controls:not([data-visible="true"]) .jam-status-tooltip {
   visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
 }
+
+/* Native toolbar sibling: layout and zoom are owned by the same row as @. */
+#jimeng-bgm-toggle {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  flex: 0 0 var(--jam-bgm-size, 32px) !important;
+  width: var(--jam-bgm-size, 32px) !important;
+  height: var(--jam-bgm-size, 32px) !important;
+  min-width: 0 !important;
+  margin: 0 0 0 var(--jam-bgm-gap, 0px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #d9dadc !important;
+  cursor: pointer !important;
+  transform-origin: center;
+  transition: transform 360ms cubic-bezier(.2, 1.7, .4, 1), background 160ms ease !important;
+}
+#jimeng-bgm-toggle svg {
+  display: block;
+  flex: none;
+  width: var(--jam-bgm-icon, 16px);
+  height: var(--jam-bgm-icon, 16px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+#jimeng-bgm-toggle .jam-bgm-slash { stroke-width: 2.2; }
+#jimeng-bgm-toggle[aria-checked="true"] .jam-bgm-slash { visibility: hidden; }
+#jimeng-bgm-toggle:hover:not(:disabled) { background: #ffffff0d !important; transform: scale(1.04); }
+#jimeng-bgm-toggle:active:not(:disabled) { transform: scale(.9, .84); transition-duration: 80ms !important; }
+#jimeng-bgm-toggle:focus-visible { outline: 2px solid #cdd1e5 !important; outline-offset: 2px !important; }
+#jimeng-bgm-toggle:disabled { opacity: .45; cursor: wait !important; }
+@media (prefers-reduced-motion: reduce) {
+  #jimeng-bgm-toggle { transition: none !important; transform: none !important; }
+}
