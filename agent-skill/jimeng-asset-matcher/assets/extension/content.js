@@ -890,7 +890,8 @@
       );
       plugin.editor.highlightReferences(
         editor,
-        finalPlan.matches,
+        [...finalPlan.matches, ...matcher.missingPromptReferences(finalPrompt, candidateNames)
+          .filter((reference) => !plugin.editor.isMatchPaired(editor, reference))],
         { exactPositions: true }
       );
       const remainingCandidateNames = new Set(
