@@ -4,9 +4,9 @@
   const plugin = scope.JimengAssetPlugin;
   const {
     matchPromptToCandidates,
+    missingPromptReferences,
     normalizeAssetName,
-    normalizeText,
-    parsePromptReferences
+    normalizeText
   } = scope.JimengAssetMatcher;
   const { highlightName, overlayId } = plugin.constants;
   const maxUnmatchedNameLength = 16;
@@ -497,6 +497,16 @@
     return matches.filter((match) => !isMatchPaired(editor, match));
   }
 
+  // Native chips remain available when the upload catalogue is invalidated.
+  // Their full labels resolve spaced filenames for display only; they must
+  // never manufacture upload candidates or satisfy a different source slot.
+  function highlightCandidateNames(editor, candidateNames = []) {
+    return Array.from(new Set([
+      ...candidateNames,
+      ...mentionRoots(editor).flatMap(mentionLabels)
+    ].map(normalizeAssetName).filter(Boolean)));
+  }
+
   // Absolute diagnostic counts use unique outer mention roots and exact labels.
   function countCandidateMentions(editor, candidateNames) {
     const names = Array.from(new Set(
@@ -561,6 +571,13 @@
 
   // The overlay lives outside Slate, so Dreamina cannot reconcile it away.
   function highlightReferences(editor, references, { exactPositions = false } = {}) {
+    if (exactPositions && references?.length) {
+      const pairedStarts = new Set(matchPromptToCandidates(
+        plainText(editor),
+        highlightCandidateNames(editor, references.map((reference) => reference.name))
+      ).filter((match) => isMatchPaired(editor, match)).map((match) => match.start));
+      references = references.filter((reference) => !pairedStarts.has(reference.start));
+    }
     plugin.state.applyingHighlights = true;
     scope.CSS?.highlights?.delete(highlightName);
     removeOverlay();
@@ -683,16 +700,21 @@
     return names;
   }
 
+  // Shared by highlighting, the toolbar count and the send confirmation.
+  // Neither an empty catalogue nor preserved source text proves a missing pair.
+  function unpairedPromptReferences(editor, candidateNames = null) {
+    const knownNames = highlightCandidateNames(
+      editor, candidateNames || plugin.state.candidateNamesSnapshot || []
+    );
+    const missing = missingPromptReferences(plainText(editor), knownNames)
+      .filter((reference) => !isMatchPaired(editor, reference));
+    return [...unpairedCandidateMatches(editor, knownNames), ...missing]
+      .sort((left, right) => left.start - right.start);
+  }
+
   function highlightRemaining(editor, candidateNames = null) {
-    const knownNames = candidateNames || plugin.state.candidateNamesSnapshot || [];
-    if (knownNames.length) {
-      return highlightReferences(
-        editor,
-        unpairedCandidateMatches(editor, knownNames),
-        { exactPositions: true }
-      );
-    }
-    return highlightReferences(editor, parsePromptReferences(plainText(editor)));
+    return highlightReferences(editor, unpairedPromptReferences(editor, candidateNames),
+      { exactPositions: true });
   }
 
   function refreshHighlights(event) {
@@ -724,6 +746,7 @@
     refreshHighlights,
     verifyNativeSelection: (editor, match) => syncNativeSelection(editor, match.token, "verify"),
     nativeSelectionAction: (editor, mode) => syncNativeSelection(editor, "", mode),
-    unpairedCandidateMatches
+    unpairedCandidateMatches,
+    unpairedPromptReferences
   };
 })(globalThis);
