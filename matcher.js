@@ -74,7 +74,7 @@
 
   // Generic parsing finds explicit @ references before the asset menu is
   // available. Candidate-aware matching below determines the exact boundary.
-  function parsePromptReferences(prompt) {
+  function parsePromptReferences(prompt, { deduplicate = true } = {}) {
     const text = String(prompt || "");
     const references = [];
     const seen = new Set();
@@ -83,7 +83,7 @@
 
     while ((match = pattern.exec(text)) !== null) {
       const name = normalizeAssetName(match[1]);
-      if (!name || seen.has(name) || !explicitAtStart(text, match.index)) {
+      if (!name || (deduplicate && seen.has(name)) || !explicitAtStart(text, match.index)) {
         continue;
       }
       seen.add(name);
@@ -95,6 +95,16 @@
       });
     }
     return references;
+  }
+
+  // Keep every missing slot, but let known filenames own their exact boundary
+  // (including names with spaces or names immediately followed by CJK prose).
+  function missingPromptReferences(prompt, candidateNames) {
+    const resolvedStarts = new Set(
+      matchPromptToCandidates(prompt, candidateNames).map((match) => match.start)
+    );
+    return parsePromptReferences(prompt, { deduplicate: false })
+      .filter((reference) => !resolvedStarts.has(reference.start));
   }
 
   // Generic parsing may over-capture CJK prose or under-capture names with
@@ -305,6 +315,7 @@
   }
 
   return {
+    missingPromptReferences,
     matchPromptToCandidates,
     matchBelongsToReference,
     matchSlotKey,
