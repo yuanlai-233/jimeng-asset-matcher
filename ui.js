@@ -5,7 +5,6 @@
   const {
     matchPromptToCandidates,
     normalizeText,
-    parsePromptReferences,
     pruneInactiveMentionTargets,
     unexpectedCandidateNames
   } = scope.JimengAssetMatcher;
@@ -1085,25 +1084,23 @@
         verified: false
       };
     }
-    let remaining = plugin.state.statusRemainingNames.map((name) => ({ name }));
-    if (refreshContent || plugin.state.statusContentDirty) {
-      const candidateNames = plugin.state.candidateNamesSnapshot;
-      remaining = candidateNames.length && plugin.editor.unpairedCandidateMatches
-        ? plugin.editor.unpairedCandidateMatches(editor, candidateNames)
-        : parsePromptReferences(plugin.editor.plainText(editor));
-      plugin.state.statusRemainingCount = remaining.length;
-      plugin.state.statusRemainingNames = remaining.map((item) => item.name);
-      plugin.state.statusContentDirty = false;
-    }
     if (plugin.state.materialCheckPending) {
       const materialsChanged = materialBaselineChanged(editor) ||
         candidateMaterialsChanged(editor);
       if (materialsChanged) {
         clearMatchVerification();
         clearCandidateUsage();
+        plugin.state.statusContentDirty = true;
       }
     }
     plugin.state.materialCheckPending = false;
+    let remaining = plugin.state.statusRemainingNames.map((name) => ({ name }));
+    if (refreshContent || plugin.state.statusContentDirty) {
+      remaining = plugin.editor.unpairedPromptReferences(editor, plugin.state.candidateNamesSnapshot);
+      plugin.state.statusRemainingCount = remaining.length;
+      plugin.state.statusRemainingNames = remaining.map((item) => item.name);
+      plugin.state.statusContentDirty = false;
+    }
     const remainingCount = plugin.state.statusRemainingCount;
     const unexpectedMaterials = unacknowledgedUnexpectedMaterials();
     const verified = plugin.state.matchStatusVerified &&
