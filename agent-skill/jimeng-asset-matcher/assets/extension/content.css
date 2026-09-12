@@ -1,0 +1,673 @@
+/* Page theme tokens only affect extension-owned UI. */
+:root {
+  --jam-scheme: dark;
+  --jam-dock: #1e2024e8;
+  --jam-border: #ffffff16;
+  --jam-subtle: #ffffff06;
+  --jam-hover: #ffffff0d;
+  --jam-primary-top: #fafafa;
+  --jam-primary-bottom: #e2e3e7;
+  --jam-primary-text: #292b32;
+  --jam-primary-inset: #fff9;
+  --jam-secondary-text: #d8d9df;
+  --jam-focus: #cdd1e5;
+  --jam-spinner-track: #ffffff28;
+  --jam-spinner: #ebecf0;
+  --jam-warning: #ddc49c;
+  --jam-success: #a3d6bd;
+  --jam-panel: #292b30fa;
+  --jam-text: #e6e7ed;
+  --jam-muted: #d9dae0;
+  --jam-faint: #999eac;
+  --jam-strong: #fff;
+  --jam-success-bg: #ace0c415;
+  --jam-warning-bg: #e9c99b15;
+  --jam-error: #f2afb6;
+  --jam-error-bg: #f2afb615;
+  --jam-error-chip: #70404b;
+  --jam-error-chip-text: #ffe4e8;
+  --jam-secondary: #353a44;
+  --jam-secondary-fg: #e2e7f0;
+  --jam-action: #e9eaee;
+  --jam-music: #d9dadc;
+}
+:root[data-jimeng-theme="light"] {
+  --jam-scheme: light;
+  --jam-dock: #fffffff2;
+  --jam-border: #222b3a1a;
+  --jam-subtle: #20263206;
+  --jam-hover: #2026320c;
+  --jam-primary-top: #34363d;
+  --jam-primary-bottom: #24262c;
+  --jam-primary-text: #ffffff;
+  --jam-primary-inset: #ffffff18;
+  --jam-secondary-text: #48505d;
+  --jam-focus: #687b9c;
+  --jam-spinner-track: #20263225;
+  --jam-spinner: #48505d;
+  --jam-warning: #885811;
+  --jam-success: #22724b;
+  --jam-panel: #fffffff7;
+  --jam-text: #252a33;
+  --jam-muted: #56606f;
+  --jam-faint: #697586;
+  --jam-strong: #20252e;
+  --jam-success-bg: #e9f5ee;
+  --jam-warning-bg: #fff3df;
+  --jam-error: #a93449;
+  --jam-error-bg: #fff0f2;
+  --jam-error-chip: #f2cbd4;
+  --jam-error-chip-text: #82263b;
+  --jam-secondary: #edf0f4;
+  --jam-secondary-fg: #424b59;
+  --jam-action: #292c33;
+  --jam-music: #4b5059;
+}
+
+/* Soft monochrome controls shared by ordinary and canvas composers. */
+#jimeng-match-controls {
+  --jam-spring: linear(0, .55 12%, 1.17 30%, .93 50%, 1.02 72%, 1);
+  position: fixed !important;
+  left: 8px;
+  top: 8px;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  width: max-content !important;
+  max-width: calc(100vw - 16px) !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 2px !important;
+  border: 1px solid var(--jam-border) !important;
+  border-radius: 999px !important;
+  background: var(--jam-dock) !important;
+  box-shadow: 0 3px 12px #0002, inset 0 1px 0 var(--jam-subtle) !important;
+  backdrop-filter: blur(16px);
+  visibility: hidden;
+  pointer-events: auto !important;
+  z-index: 2147483000 !important;
+  color-scheme: var(--jam-scheme);
+}
+#jimeng-asset-match-button,
+#jimeng-local-upload-button {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  position: relative !important;
+  flex: 0 0 88px !important;
+  width: 88px !important;
+  min-width: 88px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 8px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, var(--jam-primary-top), var(--jam-primary-bottom)) !important;
+  color: var(--jam-primary-text) !important;
+  box-shadow: inset 0 1px 0 var(--jam-primary-inset), 0 1px 3px #0002 !important;
+  font: 600 11px/1 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 440ms cubic-bezier(.2, 1.7, .4, 1), filter 160ms ease, opacity 160ms ease !important;
+  transition: transform 440ms var(--jam-spring), filter 160ms ease, opacity 160ms ease !important;
+  -webkit-tap-highlight-color: transparent;
+}
+#jimeng-local-upload-button {
+  background: var(--jam-hover) !important;
+  color: var(--jam-secondary-text) !important;
+  box-shadow: inset 0 1px 0 var(--jam-subtle) !important;
+}
+#jimeng-asset-match-button::before,
+#jimeng-local-upload-button::before {
+  content: "";
+  box-sizing: border-box;
+  display: block;
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  opacity: .8;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m9 1 1.8 4.2L15 7l-4.2 1.8L9 13 7.2 8.8 3 7l4.2-1.8L9 1ZM3 10l.9 2.1L6 13l-2.1.9L3 16l-.9-2.1L0 13l2.1-.9L3 10Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+#jimeng-local-upload-button::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 11V2m-3 3 3-3 3 3M2 10v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+#jimeng-asset-match-button:hover:not(:disabled),
+#jimeng-local-upload-button:hover:not(:disabled) { transform: translateY(-1px) scale(1.035, 1.025); filter: brightness(1.09); }
+#jimeng-asset-match-button:active:not(:disabled),
+#jimeng-local-upload-button:active:not(:disabled) { transform: translateY(1px) scale(.94, .86) rotate(-1deg); transition-duration: 80ms !important; }
+#jimeng-asset-match-button:focus-visible,
+#jimeng-local-upload-button:focus-visible,
+#jimeng-match-status-indicator:focus-visible { outline: 2px solid var(--jam-focus) !important; outline-offset: 3px !important; }
+#jimeng-asset-match-button:disabled,
+#jimeng-local-upload-button:disabled { cursor: wait !important; opacity: .55 !important; }
+#jimeng-local-upload-button[aria-busy="true"]::before {
+  mask: none;
+  border: 1.5px solid var(--jam-spinner-track);
+  border-top-color: var(--jam-spinner);
+  border-radius: 50%;
+  background: none;
+  opacity: 1;
+  animation: jam-spin 850ms linear infinite;
+}
+
+/* A small status label keeps the state readable without a third large button. */
+#jimeng-match-status-indicator {
+  position: static !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  min-width: 62px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 7px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  color: var(--jam-warning) !important;
+  background: transparent !important;
+  font: 500 10px/1 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  white-space: nowrap !important;
+  pointer-events: auto !important;
+  cursor: help !important;
+}
+#jimeng-match-status-indicator::before { content: ""; width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%; background: currentColor; }
+#jimeng-match-status-indicator::after { content: attr(data-caption); }
+#jimeng-match-status-indicator[data-state="success"] { color: var(--jam-success) !important; }
+#jimeng-match-status-indicator[data-state="success"]::before { content: "✓"; width: 9px; height: auto; background: none; font-weight: 700; }
+#jimeng-match-status-indicator:hover { background: var(--jam-subtle) !important; }
+
+/* Intentional hover: brief hints arrive after 420ms, keyboard hints immediately. */
+#jimeng-match-controls .jam-control-tooltip,
+#jimeng-match-status-indicator .jam-status-tooltip {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: calc(100% + 6px) !important;
+  box-sizing: border-box !important;
+  width: max-content !important;
+  max-width: min(260px, calc(100vw - 24px)) !important;
+  max-height: min(210px, var(--jam-hint-space, calc(100vh - 64px))) !important;
+  overflow: auto !important;
+  padding: 8px 11px !important;
+  border: 1px solid var(--jam-border) !important;
+  border-radius: 14px !important;
+  background: var(--jam-panel) !important;
+  color: var(--jam-muted) !important;
+  font: 400 11px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  text-align: left !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  box-shadow: 0 6px 24px #0003 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(4px) scale(.95);
+  transform-origin: bottom right;
+  transition: opacity 120ms ease, visibility 120ms ease, transform 340ms cubic-bezier(.2, 1.7, .4, 1) !important;
+  pointer-events: none !important;
+}
+#jimeng-match-controls[data-tooltip-side="bottom"] .jam-control-tooltip,
+#jimeng-match-controls[data-tooltip-side="bottom"] .jam-status-tooltip { top: calc(100% + 6px) !important; bottom: auto !important; transform-origin: top right; }
+#jimeng-local-upload-button:is(:hover, :focus-visible) ~ #jimeng-local-upload-button-hint,
+#jimeng-asset-match-button:is(:hover, :focus-visible) ~ #jimeng-asset-match-button-hint,
+#jimeng-match-controls .jam-control-tooltip:hover,
+#jimeng-match-status-indicator:is(:hover, :focus-visible) .jam-status-tooltip,
+#jimeng-match-status-indicator .jam-status-tooltip:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1);
+  transition-delay: 420ms !important;
+  pointer-events: auto !important;
+}
+#jimeng-match-controls .jam-control-tooltip:hover,
+#jimeng-match-status-indicator .jam-status-tooltip:hover,
+#jimeng-local-upload-button:focus-visible ~ #jimeng-local-upload-button-hint,
+#jimeng-asset-match-button:focus-visible ~ #jimeng-asset-match-button-hint,
+#jimeng-match-status-indicator:focus-visible .jam-status-tooltip { transition-delay: 0ms !important; }
+/* Hover takes priority over a different keyboard-focused button. */
+#jimeng-match-controls:has(#jimeng-local-upload-button:hover) #jimeng-asset-match-button-hint,
+#jimeng-match-controls:has(#jimeng-asset-match-button:hover) #jimeng-local-upload-button-hint,
+#jimeng-match-controls:has(#jimeng-match-status-indicator:hover) .jam-control-tooltip,
+#jimeng-match-controls:has(button:hover) .jam-status-tooltip,
+:root:has(#jimeng-asset-match-toast) #jimeng-match-controls .jam-control-tooltip,
+:root:has(#jimeng-asset-match-toast) #jimeng-match-controls .jam-status-tooltip {
+  opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transition-delay: 0ms !important;
+}
+
+/* One small notice: the message itself carries the title and next step. */
+#jimeng-asset-match-toast {
+  position: fixed !important;
+  left: 50% !important;
+  top: 20px !important;
+  transform: translateX(-50%) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 9px !important;
+  width: max-content !important;
+  max-width: min(340px, calc(100vw - 24px)) !important;
+  max-height: calc(100vh - 40px) !important;
+  overflow: auto !important;
+  padding: 11px 10px 11px 13px !important;
+  border: 1px solid var(--jam-border) !important;
+  border-radius: 20px !important;
+  background: var(--jam-panel) !important;
+  backdrop-filter: blur(18px);
+  color: var(--jam-text) !important;
+  font: 400 12px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  text-align: left !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  box-shadow: 0 8px 28px #0003, inset 0 1px 0 var(--jam-subtle) !important;
+  pointer-events: auto !important;
+  z-index: 2147483647 !important;
+  animation: jam-notice-in 460ms both;
+  transform-origin: top center;
+  color-scheme: var(--jam-scheme);
+}
+#jimeng-asset-match-toast .jam-toast-icon {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 18px;
+  height: 18px;
+  margin-top: 1px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--jam-hover);
+  color: var(--jam-muted);
+  font: 600 11px/1 system-ui, sans-serif;
+}
+#jimeng-asset-match-toast[data-kind="success"] .jam-toast-icon { color: var(--jam-success); background: var(--jam-success-bg); }
+#jimeng-asset-match-toast[data-kind="warning"] .jam-toast-icon { color: var(--jam-warning); background: var(--jam-warning-bg); }
+#jimeng-asset-match-toast[data-kind="error"] .jam-toast-icon { color: var(--jam-error); background: var(--jam-error-bg); }
+#jimeng-asset-match-toast[data-progress="true"] .jam-toast-icon { color: transparent; background: none; border: 1.5px solid var(--jam-spinner-track); border-top-color: var(--jam-spinner); animation: jam-spin 850ms linear infinite; }
+#jimeng-asset-match-toast .jam-toast-content { min-width: 0; flex: 1; }
+#jimeng-asset-match-toast .jam-toast-detail { color: var(--jam-muted); font-size: 12px; line-height: 1.65; }
+#jimeng-asset-match-toast .jam-toast-close {
+  flex: 0 0 20px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--jam-faint);
+  font: 400 17px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+#jimeng-asset-match-toast .jam-toast-close:hover { color: var(--jam-strong); background: var(--jam-hover); }
+#jimeng-asset-match-toast .jam-toast-close:focus-visible { outline: 2px solid var(--jam-focus); outline-offset: 2px; }
+#jimeng-asset-match-toast[data-leaving="true"] { animation: jam-notice-out 130ms ease-in forwards; pointer-events: none !important; }
+@keyframes jam-spin { to { transform: rotate(360deg); } }
+@keyframes jam-notice-in {
+  0% { opacity: 0; translate: 0 -8px; scale: .9 .82; }
+  48% { opacity: 1; translate: 0 2px; scale: 1.025 1.045; }
+  70% { translate: 0 -1px; scale: .99 .98; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+@keyframes jam-notice-out { to { opacity: 0; translate: 0 -5px; scale: .96; } }
+@keyframes jam-card-in {
+  0% { opacity: 0; transform: translateY(12px) scale(.94, .88); }
+  50% { opacity: 1; transform: translateY(-2px) scale(1.012, 1.025); }
+  74% { transform: translateY(1px) scale(.995, .99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Unmatched annotations live outside Slate and never modify prompt DOM. */
+#jimeng-unmatched-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  z-index: 2147482000 !important;
+}
+
+#jimeng-unmatched-overlay .jam-unmatched-overlay-mark {
+  position: fixed !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  background: rgba(230, 0, 45, 0.07) !important;
+  box-shadow: inset 0 -2px 0 #e6002d !important;
+  border-radius: 2px !important;
+  pointer-events: none !important;
+}
+
+#jimeng-unmatched-overlay .jam-unmatched-summary {
+  position: fixed !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 32px !important;
+  padding: 5px 8px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(230, 0, 45, 0.24) !important;
+  border-radius: 8px !important;
+  background: var(--jam-error-bg) !important;
+  color: var(--jam-error) !important;
+  font: 600 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(110, 10, 30, 0.1) !important;
+  pointer-events: none !important;
+}
+
+#jimeng-unmatched-overlay .jam-unmatched-summary-label {
+  flex: 0 0 auto !important;
+  padding: 3px 6px !important;
+  border-radius: 5px !important;
+  background: var(--jam-error-chip) !important;
+  color: var(--jam-error-chip-text) !important;
+}
+
+#jimeng-unmatched-overlay .jam-unmatched-summary-chip {
+  min-width: 0 !important;
+  max-width: 170px !important;
+  padding: 3px 6px !important;
+  overflow: hidden !important;
+  border-radius: 5px !important;
+  background: rgba(230, 0, 45, 0.08) !important;
+  color: var(--jam-error) !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#jimeng-unmatched-overlay .jam-unmatched-summary-more {
+  flex: 0 0 auto !important;
+  color: var(--jam-error) !important;
+}
+
+::highlight(jimeng-unmatched-reference) {
+  color: #e6002d !important;
+  background-color: rgba(230, 0, 45, 0.07) !important;
+  text-decoration: underline #e6002d 1.5px !important;
+}
+
+/* Send guard and possible-extra-material review dialogs. */
+#jimeng-send-confirm,
+#jimeng-extra-material-confirm,
+#jimeng-first-use-guide {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 15, 20, 0.28);
+  backdrop-filter: blur(2px);
+  z-index: 2147483646;
+}
+
+#jimeng-first-use-guide {
+  z-index: 2147483647;
+}
+
+#jimeng-send-confirm .jam-confirm-card,
+#jimeng-extra-material-confirm .jam-confirm-card {
+  box-sizing: border-box;
+  width: min(350px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  color-scheme: var(--jam-scheme);
+  padding: 20px;
+  border: 1px solid var(--jam-border);
+  border-radius: 24px;
+  background: var(--jam-panel);
+  animation: jam-card-in 460ms both;
+  color: var(--jam-text);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+#jimeng-send-confirm .jam-confirm-title,
+#jimeng-extra-material-confirm .jam-confirm-title {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+#jimeng-send-confirm .jam-confirm-message,
+#jimeng-extra-material-confirm .jam-confirm-message {
+  overflow-wrap: anywhere;
+  color: var(--jam-muted);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+#jimeng-send-confirm .jam-confirm-actions,
+#jimeng-extra-material-confirm .jam-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#jimeng-send-confirm button,
+#jimeng-extra-material-confirm button {
+  height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--jam-secondary);
+  color: var(--jam-secondary-fg);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#jimeng-send-confirm button[data-action="confirm"] {
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
+}
+
+#jimeng-extra-material-confirm button[data-action="keep"] {
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
+}
+
+/* First-use guide. It is shown once and has no permanent toolbar button. */
+#jimeng-first-use-guide .jam-onboarding-card {
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 32px));
+  max-height: min(820px, calc(100vh - 32px));
+  overflow: auto;
+  color-scheme: var(--jam-scheme);
+  padding: 22px;
+  border: 1px solid var(--jam-border);
+  border-radius: 24px;
+  background: var(--jam-panel);
+  animation: jam-card-in 460ms both;
+  color: var(--jam-text);
+  box-shadow: 0 24px 80px rgba(24, 18, 52, 0.26);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+#jimeng-first-use-guide .jam-onboarding-eyebrow {
+  margin-bottom: 6px;
+  color: var(--jam-muted);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+#jimeng-first-use-guide h2 {
+  margin: 0;
+  color: var(--jam-text);
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+#jimeng-first-use-guide .jam-onboarding-lead {
+  margin: 9px 0 18px;
+  color: var(--jam-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#jimeng-first-use-guide .jam-onboarding-steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#jimeng-first-use-guide .jam-onboarding-steps li {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--jam-border);
+  border-radius: 11px;
+  background: var(--jam-subtle);
+}
+
+#jimeng-first-use-guide .jam-onboarding-steps strong {
+  color: var(--jam-text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+#jimeng-first-use-guide .jam-onboarding-steps span {
+  color: var(--jam-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+#jimeng-first-use-guide .jam-onboarding-note {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--jam-subtle);
+  color: var(--jam-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+#jimeng-first-use-guide .jam-onboarding-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#jimeng-first-use-guide button {
+  min-height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--jam-secondary);
+  color: var(--jam-secondary-fg);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+#jimeng-first-use-guide button[data-action="start"] {
+  min-width: 120px;
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
+}
+
+#jimeng-first-use-guide button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+@media (max-width: 560px) {
+  #jimeng-first-use-guide {
+    padding: 12px;
+  }
+
+  #jimeng-first-use-guide .jam-onboarding-card {
+    width: calc(100vw - 24px);
+    padding: 20px;
+  }
+
+  #jimeng-first-use-guide .jam-onboarding-steps li {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  #jimeng-first-use-guide .jam-onboarding-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+}
+
+#jimeng-first-use-guide .jam-onboarding-example { padding: 14px 16px; margin-bottom: 16px; border: 1px solid var(--jam-border); border-radius: 14px; background: var(--jam-subtle); color: var(--jam-muted); white-space: pre-wrap; font: 500 13px/1.85 system-ui, sans-serif; }
+#jimeng-first-use-guide button:focus-visible, #jimeng-send-confirm button:focus-visible, #jimeng-extra-material-confirm button:focus-visible { outline: 2px solid var(--jam-focus); outline-offset: 3px; }
+#jimeng-first-use-guide button:hover, #jimeng-send-confirm button:hover, #jimeng-extra-material-confirm button:hover { filter: brightness(1.08); }
+#jimeng-first-use-guide button, #jimeng-send-confirm button, #jimeng-extra-material-confirm button {
+  transition: transform 400ms cubic-bezier(.2, 1.7, .4, 1), filter 150ms ease;
+}
+#jimeng-first-use-guide button:active:not(:disabled), #jimeng-send-confirm button:active, #jimeng-extra-material-confirm button:active { transform: scale(.95, .9); transition-duration: 80ms; }
+@media (prefers-reduced-motion: reduce) {
+  #jimeng-match-controls *, #jimeng-match-controls *::before, #jimeng-match-controls *::after,
+  #jimeng-asset-match-toast, #jimeng-asset-match-toast *, #jimeng-first-use-guide *,
+  #jimeng-send-confirm *, #jimeng-extra-material-confirm * {
+    animation: none !important; transition: none !important;
+    transform: none !important;
+  }
+  #jimeng-asset-match-toast { transform: translateX(-50%) !important; }
+}
+
+/* Hiding a parent must also suppress explicitly visible tooltip descendants. */
+#jimeng-match-controls:not([data-visible="true"]) .jam-control-tooltip,
+#jimeng-match-controls:not([data-visible="true"]) .jam-status-tooltip {
+  visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+}
+
+/* Native toolbar sibling: layout and zoom are owned by the same row as @. */
+#jimeng-bgm-toggle {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  flex: 0 0 var(--jam-bgm-size, 32px) !important;
+  width: var(--jam-bgm-size, 32px) !important;
+  height: var(--jam-bgm-size, 32px) !important;
+  min-width: 0 !important;
+  margin: 0 0 0 var(--jam-bgm-gap, 0px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--jam-music) !important;
+  cursor: pointer !important;
+  transform-origin: center;
+  transition: transform 360ms cubic-bezier(.2, 1.7, .4, 1), background 160ms ease !important;
+}
+#jimeng-bgm-toggle svg {
+  display: block;
+  flex: none;
+  width: var(--jam-bgm-icon, 16px);
+  height: var(--jam-bgm-icon, 16px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+#jimeng-bgm-toggle .jam-bgm-slash { stroke-width: 2.2; }
+#jimeng-bgm-toggle[aria-checked="true"] .jam-bgm-slash { visibility: hidden; }
+#jimeng-bgm-toggle:hover:not(:disabled) { background: var(--jam-hover) !important; transform: scale(1.04); }
+#jimeng-bgm-toggle:active:not(:disabled) { transform: scale(.9, .84); transition-duration: 80ms !important; }
+#jimeng-bgm-toggle:focus-visible { outline: 2px solid var(--jam-focus) !important; outline-offset: 2px !important; }
+#jimeng-bgm-toggle:disabled { opacity: .45; cursor: wait !important; }
+@media (prefers-reduced-motion: reduce) {
+  #jimeng-bgm-toggle { transition: none !important; transform: none !important; }
+}
