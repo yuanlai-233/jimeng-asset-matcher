@@ -640,6 +640,7 @@
     }
     setControlsVisibility(controls, false);
     const context = preferredContext || resolveActiveComposerContext();
+    plugin.theme?.follow(context?.editor);
     plugin.bgm?.mount(context || resolveActiveComposerContext(undefined, { allowDisabledSend: true }));
     if (!indicator || !button || !context) return;
     const { composerRoot, editor, nativeAtButton, sendButton } = context;

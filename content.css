@@ -1,3 +1,69 @@
+/* Page theme tokens only affect extension-owned UI. */
+:root {
+  --jam-scheme: dark;
+  --jam-dock: #1e2024e8;
+  --jam-border: #ffffff16;
+  --jam-subtle: #ffffff06;
+  --jam-hover: #ffffff0d;
+  --jam-primary-top: #fafafa;
+  --jam-primary-bottom: #e2e3e7;
+  --jam-primary-text: #292b32;
+  --jam-primary-inset: #fff9;
+  --jam-secondary-text: #d8d9df;
+  --jam-focus: #cdd1e5;
+  --jam-spinner-track: #ffffff28;
+  --jam-spinner: #ebecf0;
+  --jam-warning: #ddc49c;
+  --jam-success: #a3d6bd;
+  --jam-panel: #292b30fa;
+  --jam-text: #e6e7ed;
+  --jam-muted: #d9dae0;
+  --jam-faint: #999eac;
+  --jam-strong: #fff;
+  --jam-success-bg: #ace0c415;
+  --jam-warning-bg: #e9c99b15;
+  --jam-error: #f2afb6;
+  --jam-error-bg: #f2afb615;
+  --jam-error-chip: #70404b;
+  --jam-error-chip-text: #ffe4e8;
+  --jam-secondary: #353a44;
+  --jam-secondary-fg: #e2e7f0;
+  --jam-action: #e9eaee;
+  --jam-music: #d9dadc;
+}
+:root[data-jimeng-theme="light"] {
+  --jam-scheme: light;
+  --jam-dock: #fffffff2;
+  --jam-border: #222b3a1a;
+  --jam-subtle: #20263206;
+  --jam-hover: #2026320c;
+  --jam-primary-top: #34363d;
+  --jam-primary-bottom: #24262c;
+  --jam-primary-text: #ffffff;
+  --jam-primary-inset: #ffffff18;
+  --jam-secondary-text: #48505d;
+  --jam-focus: #687b9c;
+  --jam-spinner-track: #20263225;
+  --jam-spinner: #48505d;
+  --jam-warning: #885811;
+  --jam-success: #22724b;
+  --jam-panel: #fffffff7;
+  --jam-text: #252a33;
+  --jam-muted: #56606f;
+  --jam-faint: #697586;
+  --jam-strong: #20252e;
+  --jam-success-bg: #e9f5ee;
+  --jam-warning-bg: #fff3df;
+  --jam-error: #a93449;
+  --jam-error-bg: #fff0f2;
+  --jam-error-chip: #f2cbd4;
+  --jam-error-chip-text: #82263b;
+  --jam-secondary: #edf0f4;
+  --jam-secondary-fg: #424b59;
+  --jam-action: #292c33;
+  --jam-music: #4b5059;
+}
+
 /* Soft monochrome controls shared by ordinary and canvas composers. */
 #jimeng-match-controls {
   --jam-spring: linear(0, .55 12%, 1.17 30%, .93 50%, 1.02 72%, 1);
@@ -13,15 +79,15 @@
   height: 34px !important;
   margin: 0 !important;
   padding: 2px !important;
-  border: 1px solid #ffffff0b !important;
+  border: 1px solid var(--jam-border) !important;
   border-radius: 999px !important;
-  background: #1e2024e8 !important;
-  box-shadow: 0 3px 12px #0002, inset 0 1px 0 #ffffff04 !important;
+  background: var(--jam-dock) !important;
+  box-shadow: 0 3px 12px #0002, inset 0 1px 0 var(--jam-subtle) !important;
   backdrop-filter: blur(16px);
   visibility: hidden;
   pointer-events: auto !important;
   z-index: 2147483000 !important;
-  color-scheme: dark;
+  color-scheme: var(--jam-scheme);
 }
 #jimeng-asset-match-button,
 #jimeng-local-upload-button {
@@ -39,9 +105,9 @@
   padding: 0 8px !important;
   border: 0 !important;
   border-radius: 999px !important;
-  background: linear-gradient(180deg, #fafafa, #e2e3e7) !important;
-  color: #292b32 !important;
-  box-shadow: inset 0 1px 0 #fff9, 0 1px 3px #0002 !important;
+  background: linear-gradient(180deg, var(--jam-primary-top), var(--jam-primary-bottom)) !important;
+  color: var(--jam-primary-text) !important;
+  box-shadow: inset 0 1px 0 var(--jam-primary-inset), 0 1px 3px #0002 !important;
   font: 600 11px/1 system-ui, -apple-system, "Segoe UI", sans-serif !important;
   letter-spacing: 0 !important;
   white-space: nowrap !important;
@@ -53,9 +119,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 #jimeng-local-upload-button {
-  background: #ffffff0a !important;
-  color: #d8d9df !important;
-  box-shadow: inset 0 1px 0 #ffffff06 !important;
+  background: var(--jam-hover) !important;
+  color: var(--jam-secondary-text) !important;
+  box-shadow: inset 0 1px 0 var(--jam-subtle) !important;
 }
 #jimeng-asset-match-button::before,
 #jimeng-local-upload-button::before {
@@ -78,13 +144,13 @@
 #jimeng-local-upload-button:active:not(:disabled) { transform: translateY(1px) scale(.94, .86) rotate(-1deg); transition-duration: 80ms !important; }
 #jimeng-asset-match-button:focus-visible,
 #jimeng-local-upload-button:focus-visible,
-#jimeng-match-status-indicator:focus-visible { outline: 2px solid #cdd1e5 !important; outline-offset: 3px !important; }
+#jimeng-match-status-indicator:focus-visible { outline: 2px solid var(--jam-focus) !important; outline-offset: 3px !important; }
 #jimeng-asset-match-button:disabled,
 #jimeng-local-upload-button:disabled { cursor: wait !important; opacity: .55 !important; }
 #jimeng-local-upload-button[aria-busy="true"]::before {
   mask: none;
-  border: 1.5px solid #ffffff28;
-  border-top-color: #ebecf0;
+  border: 1.5px solid var(--jam-spinner-track);
+  border-top-color: var(--jam-spinner);
   border-radius: 50%;
   background: none;
   opacity: 1;
@@ -105,7 +171,7 @@
   padding: 0 7px !important;
   border: 0 !important;
   border-radius: 999px !important;
-  color: #ddc49c !important;
+  color: var(--jam-warning) !important;
   background: transparent !important;
   font: 500 10px/1 system-ui, -apple-system, "Segoe UI", sans-serif !important;
   white-space: nowrap !important;
@@ -114,9 +180,9 @@
 }
 #jimeng-match-status-indicator::before { content: ""; width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%; background: currentColor; }
 #jimeng-match-status-indicator::after { content: attr(data-caption); }
-#jimeng-match-status-indicator[data-state="success"] { color: #a3d6bd !important; }
+#jimeng-match-status-indicator[data-state="success"] { color: var(--jam-success) !important; }
 #jimeng-match-status-indicator[data-state="success"]::before { content: "✓"; width: 9px; height: auto; background: none; font-weight: 700; }
-#jimeng-match-status-indicator:hover { background: #ffffff06 !important; }
+#jimeng-match-status-indicator:hover { background: var(--jam-subtle) !important; }
 
 /* Intentional hover: brief hints arrive after 420ms, keyboard hints immediately. */
 #jimeng-match-controls .jam-control-tooltip,
@@ -130,10 +196,10 @@
   max-height: min(210px, var(--jam-hint-space, calc(100vh - 64px))) !important;
   overflow: auto !important;
   padding: 8px 11px !important;
-  border: 1px solid #ffffff16 !important;
+  border: 1px solid var(--jam-border) !important;
   border-radius: 14px !important;
-  background: #292b30fa !important;
-  color: #d9dae0 !important;
+  background: var(--jam-panel) !important;
+  color: var(--jam-muted) !important;
   font: 400 11px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif !important;
   text-align: left !important;
   white-space: pre-wrap !important;
@@ -189,21 +255,21 @@
   max-height: calc(100vh - 40px) !important;
   overflow: auto !important;
   padding: 11px 10px 11px 13px !important;
-  border: 1px solid #ffffff18 !important;
+  border: 1px solid var(--jam-border) !important;
   border-radius: 20px !important;
-  background: #292b30f5 !important;
+  background: var(--jam-panel) !important;
   backdrop-filter: blur(18px);
-  color: #e6e7ed !important;
+  color: var(--jam-text) !important;
   font: 400 12px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif !important;
   text-align: left !important;
   white-space: pre-wrap !important;
   overflow-wrap: anywhere !important;
-  box-shadow: 0 8px 28px #0003, inset 0 1px 0 #ffffff05 !important;
+  box-shadow: 0 8px 28px #0003, inset 0 1px 0 var(--jam-subtle) !important;
   pointer-events: auto !important;
   z-index: 2147483647 !important;
   animation: jam-notice-in 460ms both;
   transform-origin: top center;
-  color-scheme: dark;
+  color-scheme: var(--jam-scheme);
 }
 #jimeng-asset-match-toast .jam-toast-icon {
   box-sizing: border-box;
@@ -214,16 +280,16 @@
   margin-top: 1px;
   border: 0;
   border-radius: 50%;
-  background: #ffffff12;
-  color: #d7d9e2;
+  background: var(--jam-hover);
+  color: var(--jam-muted);
   font: 600 11px/1 system-ui, sans-serif;
 }
-#jimeng-asset-match-toast[data-kind="success"] .jam-toast-icon { color: #ace0c4; background: #ace0c415; }
-#jimeng-asset-match-toast[data-kind="warning"] .jam-toast-icon { color: #e9c99b; background: #e9c99b15; }
-#jimeng-asset-match-toast[data-kind="error"] .jam-toast-icon { color: #f2afb6; background: #f2afb615; }
-#jimeng-asset-match-toast[data-progress="true"] .jam-toast-icon { color: transparent; background: none; border: 1.5px solid #dddfea26; border-top-color: #dddfea; animation: jam-spin 850ms linear infinite; }
+#jimeng-asset-match-toast[data-kind="success"] .jam-toast-icon { color: var(--jam-success); background: var(--jam-success-bg); }
+#jimeng-asset-match-toast[data-kind="warning"] .jam-toast-icon { color: var(--jam-warning); background: var(--jam-warning-bg); }
+#jimeng-asset-match-toast[data-kind="error"] .jam-toast-icon { color: var(--jam-error); background: var(--jam-error-bg); }
+#jimeng-asset-match-toast[data-progress="true"] .jam-toast-icon { color: transparent; background: none; border: 1.5px solid var(--jam-spinner-track); border-top-color: var(--jam-spinner); animation: jam-spin 850ms linear infinite; }
 #jimeng-asset-match-toast .jam-toast-content { min-width: 0; flex: 1; }
-#jimeng-asset-match-toast .jam-toast-detail { color: #d9dbe3; font-size: 12px; line-height: 1.65; }
+#jimeng-asset-match-toast .jam-toast-detail { color: var(--jam-muted); font-size: 12px; line-height: 1.65; }
 #jimeng-asset-match-toast .jam-toast-close {
   flex: 0 0 20px;
   box-sizing: border-box;
@@ -234,12 +300,12 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: #999eac;
+  color: var(--jam-faint);
   font: 400 17px/1 system-ui, sans-serif;
   cursor: pointer;
 }
-#jimeng-asset-match-toast .jam-toast-close:hover { color: #fff; background: #ffffff0d; }
-#jimeng-asset-match-toast .jam-toast-close:focus-visible { outline: 2px solid #cdd1e5; outline-offset: 2px; }
+#jimeng-asset-match-toast .jam-toast-close:hover { color: var(--jam-strong); background: var(--jam-hover); }
+#jimeng-asset-match-toast .jam-toast-close:focus-visible { outline: 2px solid var(--jam-focus); outline-offset: 2px; }
 #jimeng-asset-match-toast[data-leaving="true"] { animation: jam-notice-out 130ms ease-in forwards; pointer-events: none !important; }
 @keyframes jam-spin { to { transform: rotate(360deg); } }
 @keyframes jam-notice-in {
@@ -288,8 +354,8 @@
   overflow: hidden !important;
   border: 1px solid rgba(230, 0, 45, 0.24) !important;
   border-radius: 8px !important;
-  background: #30282d !important;
-  color: #f5b4bc !important;
+  background: var(--jam-error-bg) !important;
+  color: var(--jam-error) !important;
   font: 600 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif !important;
   white-space: nowrap !important;
   box-shadow: 0 4px 14px rgba(110, 10, 30, 0.1) !important;
@@ -300,8 +366,8 @@
   flex: 0 0 auto !important;
   padding: 3px 6px !important;
   border-radius: 5px !important;
-  background: #70404b !important;
-  color: #ffe4e8 !important;
+  background: var(--jam-error-chip) !important;
+  color: var(--jam-error-chip-text) !important;
 }
 
 #jimeng-unmatched-overlay .jam-unmatched-summary-chip {
@@ -311,14 +377,14 @@
   overflow: hidden !important;
   border-radius: 5px !important;
   background: rgba(230, 0, 45, 0.08) !important;
-  color: #f5b4bc !important;
+  color: var(--jam-error) !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 
 #jimeng-unmatched-overlay .jam-unmatched-summary-more {
   flex: 0 0 auto !important;
-  color: #d99ca6 !important;
+  color: var(--jam-error) !important;
 }
 
 ::highlight(jimeng-unmatched-reference) {
@@ -352,13 +418,13 @@
   width: min(350px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
   overflow: auto;
-  color-scheme: dark;
+  color-scheme: var(--jam-scheme);
   padding: 20px;
-  border: 1px solid #ffffff17;
+  border: 1px solid var(--jam-border);
   border-radius: 24px;
-  background: #292b30;
+  background: var(--jam-panel);
   animation: jam-card-in 460ms both;
-  color: #f0f3f9;
+  color: var(--jam-text);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -373,7 +439,7 @@
 #jimeng-send-confirm .jam-confirm-message,
 #jimeng-extra-material-confirm .jam-confirm-message {
   overflow-wrap: anywhere;
-  color: #c0c7d3;
+  color: var(--jam-muted);
   font-size: 13px;
   line-height: 1.65;
   white-space: pre-wrap;
@@ -393,21 +459,21 @@
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: #353a44;
-  color: #e2e7f0;
+  background: var(--jam-secondary);
+  color: var(--jam-secondary-fg);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
 
 #jimeng-send-confirm button[data-action="confirm"] {
-  background: #e9eaee;
-  color: #292b32;
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
 }
 
 #jimeng-extra-material-confirm button[data-action="keep"] {
-  background: #e9eaee;
-  color: #292b32;
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
 }
 
 /* First-use guide. It is shown once and has no permanent toolbar button. */
@@ -416,20 +482,20 @@
   width: min(460px, calc(100vw - 32px));
   max-height: min(820px, calc(100vh - 32px));
   overflow: auto;
-  color-scheme: dark;
+  color-scheme: var(--jam-scheme);
   padding: 22px;
-  border: 1px solid #ffffff17;
+  border: 1px solid var(--jam-border);
   border-radius: 24px;
-  background: #292b30;
+  background: var(--jam-panel);
   animation: jam-card-in 460ms both;
-  color: #f0f3f9;
+  color: var(--jam-text);
   box-shadow: 0 24px 80px rgba(24, 18, 52, 0.26);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 #jimeng-first-use-guide .jam-onboarding-eyebrow {
   margin-bottom: 6px;
-  color: #bfc2cf;
+  color: var(--jam-muted);
   font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.04em;
@@ -437,14 +503,14 @@
 
 #jimeng-first-use-guide h2 {
   margin: 0;
-  color: #f0f3f9;
+  color: var(--jam-text);
   font-size: 20px;
   line-height: 1.3;
 }
 
 #jimeng-first-use-guide .jam-onboarding-lead {
   margin: 9px 0 18px;
-  color: #bbc4d3;
+  color: var(--jam-muted);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -462,19 +528,19 @@
   grid-template-columns: 108px minmax(0, 1fr);
   gap: 10px;
   padding: 11px 12px;
-  border: 1px solid #ffffff08;
+  border: 1px solid var(--jam-border);
   border-radius: 11px;
-  background: #ffffff04;
+  background: var(--jam-subtle);
 }
 
 #jimeng-first-use-guide .jam-onboarding-steps strong {
-  color: #e6edf9;
+  color: var(--jam-text);
   font-size: 13px;
   line-height: 1.55;
 }
 
 #jimeng-first-use-guide .jam-onboarding-steps span {
-  color: #bdc6d4;
+  color: var(--jam-muted);
   font-size: 13px;
   line-height: 1.55;
 }
@@ -483,8 +549,8 @@
   margin: 14px 0 0;
   padding: 10px 12px;
   border-radius: 10px;
-  background: #ffffff06;
-  color: #c8cbd6;
+  background: var(--jam-subtle);
+  color: var(--jam-muted);
   font-size: 12px;
   line-height: 1.55;
 }
@@ -501,8 +567,8 @@
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: #393b43;
-  color: #d3dae5;
+  background: var(--jam-secondary);
+  color: var(--jam-secondary-fg);
   font-size: 13px;
   font-weight: 650;
   cursor: pointer;
@@ -510,8 +576,8 @@
 
 #jimeng-first-use-guide button[data-action="start"] {
   min-width: 120px;
-  background: #e9eaee;
-  color: #292b32;
+  background: var(--jam-action);
+  color: var(--jam-primary-text);
 }
 
 #jimeng-first-use-guide button:disabled {
@@ -540,8 +606,8 @@
   }
 }
 
-#jimeng-first-use-guide .jam-onboarding-example { padding: 14px 16px; margin-bottom: 16px; border: 1px solid #ffffff0c; border-radius: 14px; background: #ffffff06; color: #dadce5; white-space: pre-wrap; font: 500 13px/1.85 system-ui, sans-serif; }
-#jimeng-first-use-guide button:focus-visible, #jimeng-send-confirm button:focus-visible, #jimeng-extra-material-confirm button:focus-visible { outline: 2px solid #a8c4ff; outline-offset: 3px; }
+#jimeng-first-use-guide .jam-onboarding-example { padding: 14px 16px; margin-bottom: 16px; border: 1px solid var(--jam-border); border-radius: 14px; background: var(--jam-subtle); color: var(--jam-muted); white-space: pre-wrap; font: 500 13px/1.85 system-ui, sans-serif; }
+#jimeng-first-use-guide button:focus-visible, #jimeng-send-confirm button:focus-visible, #jimeng-extra-material-confirm button:focus-visible { outline: 2px solid var(--jam-focus); outline-offset: 3px; }
 #jimeng-first-use-guide button:hover, #jimeng-send-confirm button:hover, #jimeng-extra-material-confirm button:hover { filter: brightness(1.08); }
 #jimeng-first-use-guide button, #jimeng-send-confirm button, #jimeng-extra-material-confirm button {
   transition: transform 400ms cubic-bezier(.2, 1.7, .4, 1), filter 150ms ease;
@@ -579,7 +645,7 @@
   border: 0 !important;
   border-radius: 8px !important;
   background: transparent !important;
-  color: #d9dadc !important;
+  color: var(--jam-music) !important;
   cursor: pointer !important;
   transform-origin: center;
   transition: transform 360ms cubic-bezier(.2, 1.7, .4, 1), background 160ms ease !important;
@@ -598,9 +664,9 @@
 }
 #jimeng-bgm-toggle .jam-bgm-slash { stroke-width: 2.2; }
 #jimeng-bgm-toggle[aria-checked="true"] .jam-bgm-slash { visibility: hidden; }
-#jimeng-bgm-toggle:hover:not(:disabled) { background: #ffffff0d !important; transform: scale(1.04); }
+#jimeng-bgm-toggle:hover:not(:disabled) { background: var(--jam-hover) !important; transform: scale(1.04); }
 #jimeng-bgm-toggle:active:not(:disabled) { transform: scale(.9, .84); transition-duration: 80ms !important; }
-#jimeng-bgm-toggle:focus-visible { outline: 2px solid #cdd1e5 !important; outline-offset: 2px !important; }
+#jimeng-bgm-toggle:focus-visible { outline: 2px solid var(--jam-focus) !important; outline-offset: 2px !important; }
 #jimeng-bgm-toggle:disabled { opacity: .45; cursor: wait !important; }
 @media (prefers-reduced-motion: reduce) {
   #jimeng-bgm-toggle { transition: none !important; transform: none !important; }

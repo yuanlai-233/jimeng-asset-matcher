@@ -4,14 +4,14 @@
   const plugin = (scope.JimengAssetPlugin ||= {});
 
   const media = scope.JimengMediaFiles;
-  const POSITIVE_CONTEXT = /(?:上传|素材|参考|参照|图片|图像|视频|音频|upload|asset|material|reference|image|video|audio)/i;
-  const OMNI_CONTEXT = /(?:全能参考|万能参考|omni\s*reference|all[ -]?in[ -]?one\s*reference)/i;
+  const POSITIVE_CONTEXT = /(?:上传|上傳|素材|参考|參考|参照|图片|圖片|图像|影像|视频|影片|音频|音訊|upload|asset|material|reference|image|video|audio)/i;
+  const OMNI_CONTEXT = /(?:全能参考|万能参考|全方位參考|全能參考|omni\s*reference|all[ -]?in[ -]?one\s*reference)/i;
   const NEGATIVE_CONTEXT = /(?:头像|个人资料|字体|字幕|首帧|尾帧|封面|avatar|profile|font|subtitle|first\s*frame|last\s*frame|cover)/i;
   const BUSY_TEXT = /(?:上传中|处理中|正在上传|uploading|processing)/gi;
-  const ERROR_TEXT = /(?:上传失败|文件过大|格式不支持|重新上传|upload failed|unsupported file|file too large)/gi;
-  const ERROR_ELEMENT_TEXT = /(?:上传失败|文件过大|格式不支持|重新上传|upload failed|unsupported file|file too large)/i;
+  const ERROR_TEXT = /(?:上传失败|上傳失敗|文件过大|檔案過大|格式不支持|不支援.{0,6}格式|重新上传|重新上傳|upload failed|unsupported file|file too large)/gi;
+  const ERROR_ELEMENT_TEXT = /(?:上传失败|上傳失敗|文件过大|檔案過大|格式不支持|不支援.{0,6}格式|重新上传|重新上傳|upload failed|unsupported file|file too large)/i;
   const SUCCESS_TEXT = /(?:上传成功|上传完成|upload complete|upload succeeded)/gi;
-  const CAPACITY_TEXT = /(?:最多(?:支持)?(?:添加|上传)?\s*\d+\s*(?:个|张)?\s*(?:图片|图像|素材)|图片数量.{0,12}(?:上限|限制)|maximum.{0,20}(?:images|references|materials))/i;
+  const CAPACITY_TEXT = /(?:最多(?:支持|支援)?(?:添加|上传|上傳)?\s*\d+\s*(?:个|张|個|張)?\s*(?:图片|圖像|圖片|影片|音訊|图像|素材|參考)|(?:图片|圖片)(?:数|數)?量.{0,12}(?:上限|限制)|maximum.{0,20}(?:images|references|materials))/i;
 
   class LocalUploadError extends Error {
     constructor(code, message, details = null) {
@@ -352,7 +352,7 @@
 
   function maxAssetLabelCount(text) {
     let maximum = 0;
-    const expression = /(?:全部|图片|图像|素材|all|images?|assets?)\s*[:：]?\s*[（(]?\s*(\d{1,3})\s*[）)]?/gi;
+    const expression = /(?:全部|图片|圖片|图像|圖像|素材|all|images?|assets?)\s*[:：]?\s*[（(]?\s*(\d{1,3})\s*[）)]?/gi;
     for (const match of String(text || "").matchAll(expression)) {
       maximum = Math.max(maximum, Number(match[1]) || 0);
     }
@@ -716,13 +716,20 @@
   }
 
   function imageLimitForEditor(editor) {
+    return mediaLimitsForEditor(editor)?.image || null;
+  }
+
+  function mediaLimitsForEditor(editor) {
     const root = resolveModernRoot(editor);
     if (!root) return null;
     const controls = Array.from(root.querySelectorAll('[role="combobox"]'))
       .map((element) => String(element.textContent || "")).join(" ");
-    // Verified on ordinary Seedance 2.5 / omni reference. Do not interpret
-    // the placeholder's total-media limit (50) as the image subtype limit.
-    return /Seedance\s*2\.5/i.test(controls) && /全能参考/.test(controls) ? 30 : null;
+    if (!OMNI_CONTEXT.test(controls)) return null;
+    if (/Seedance\s*2\.5\b/i.test(controls)) return { image: 30, video: 10, audio: 10, total: 50 };
+    // Dreamina 2.0 has a separate 12-item limit; never apply the 2.5 fixture's
+    // 50-item allowance. Limits come from Dreamina's official Seedance 2.0 guide.
+    if (/Dreamina\s+Seedance\s*2\.0\b/i.test(controls)) return { image: 9, video: 3, audio: 3, total: 12 };
+    return null;
   }
 
   function canvasCapacityForEditor(editor) {
@@ -734,10 +741,6 @@
     // total materials, including manually added image/video/audio references.
     if (!/选择模型:.*Seedance\s*2\.0\b/i.test(labels) || !/生成模式:\s*全能参考/.test(labels)) return null;
     return { limit: 12, used: plugin.canvas.materialSlots(editor)?.length || 0 };
-  }
-
-  function mediaLimitsForEditor(editor) {
-    return imageLimitForEditor(editor) ? { image: 30, video: 10, audio: 10, total: 50 } : null;
   }
 
   async function dispatchModernFiles(files, root, options) {
