@@ -1,0 +1,4 @@
+interface:
+  display_name: "即梦素材一键匹配"
+  short_description: "安装即梦素材匹配扩展，自动上传图片、视频和音频，并提供图文用法与排错指导"
+  default_prompt: "使用 $jimeng-asset-matcher 安装扩展并指导我完成首次素材上传与匹配。"
