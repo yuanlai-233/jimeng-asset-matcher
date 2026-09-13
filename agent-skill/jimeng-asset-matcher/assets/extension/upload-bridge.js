@@ -113,6 +113,9 @@
       }
       if (request.mode === "capture-trigger") {
         if (view.state.selection.from !== view.state.selection.to) return result("invalid-selection");
+        // Catalogue discovery has no source-token caret to pin. Reveal the
+        // existing native selection too, before the toolbar anchors its popup.
+        if (canvasForm) view.dispatch(view.state.tr.scrollIntoView());
         const previous = pinned.get(editor);
         pinned.set(editor, { doc: view.state.doc, pos: view.state.selection.from,
           token: previous?.token || "", beforeTrigger: true });
@@ -131,7 +134,9 @@
           (saved.token && saved.doc.textBetween(saved.pos - saved.token.length, saved.pos, "", "\ufffc") !== saved.token)) {
           return result("changed");
         }
-        view.dispatch(view.state.tr.insertText("@", saved.pos, saved.pos));
+        const triggerTr = view.state.tr.insertText("@", saved.pos, saved.pos);
+        if (canvasForm) triggerTr.scrollIntoView();
+        view.dispatch(triggerTr);
         view.focus();
         return result("synced");
       }

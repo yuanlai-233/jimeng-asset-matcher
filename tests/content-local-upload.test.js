@@ -1303,6 +1303,33 @@ async function testCanvasWhitespaceUploadReconciliation() {
   console.log("✓ canvas compact names reconcile original pending uploads and remain verified on repeated matching");
 }
 
+async function testCanvasFailedUploadRecovery() {
+  resetScenario();
+  prompt = "@成功项，@失败项，@未提交项。";
+  selectedDirectory = directory("retry", [file("成功项.png"), file("失败项.png"), file("未提交项.png")]);
+  const ledger = { pending: ["成功项", "失败项"], verified: new Set(), rejected: false };
+  const materials = [{ id: "ready", name: "成功项", status: "ready" }, { id: "bad", name: "失败项", status: "failed" }];
+  plugin.canvas = { formFor: () => ({}), materialState: () => materials, uploadStateFor: () => ledger,
+    materialSlots: () => materials };
+  await assert.rejects(() => runMatchingDirect(matchButton), error => error.code === "CANVAS_UPLOAD_FAILED");
+  assert.equal(ensurePickerCalls, 0, "failed native uploads must be diagnosed before catalogue discovery");
+  assert.equal(ledger.pending.length, 0, "terminal native state releases the stale upload guard");
+  assert.deepEqual([...ledger.verified], ["成功项"]);
+  let batch;
+  uploadFiles = async (files, options) => {
+    batch = files.map(file => file.name);
+    options.onFilesDispatched({ filenames: ["失败项.png"] });
+    const error = new Error("batch failed"); error.code = "UPLOAD_REJECTED"; throw error;
+  };
+  await assert.rejects(() => runLocalUpload(uploadButton, { forceDirectory: true }), error => error.code === "UPLOAD_REJECTED");
+  assert.deepEqual(batch, ["失败项.png", "未提交项.png"], "successful cards must not be resubmitted");
+  assert.deepEqual(ledger.pending, ["失败项"], "unsubmitted later batches must not be marked dispatched");
+  materials[1].status = "uploading";
+  await assert.rejects(() => runLocalUpload(uploadButton), error => error.code === "UPLOAD_ATTEMPT_NOT_RECONCILED");
+  delete plugin.canvas;
+  console.log("✓ canvas terminal failure recovers without an incomplete catalogue, preserves successes and tracks only dispatched batches");
+}
+
 async function testMixedUploadLimitsAndLedger() {
   resetScenario();
   const images = Array.from({ length: 30 }, (_, i) => `picture_${i}`);
@@ -1335,6 +1362,7 @@ async function testMixedUploadLimitsAndLedger() {
 }
 
 (async () => {
+  await testCanvasFailedUploadRecovery();
   await testMixedUploadLimitsAndLedger();
   await testCanvasNodeLedgerAcrossRemount();
   await testCanvasManualCataloguePreventsReupload();

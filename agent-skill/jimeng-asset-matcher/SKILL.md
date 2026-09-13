@@ -10,7 +10,7 @@ metadata:
 
 # 即梦素材一键匹配
 
-内置 v0.3.21 的完整运行源码，无需编译、API Key、MCP 或 npm 依赖。扩展提供“自动上传 → 自动匹配”两步流程，普通创作页与无限画布分别处理当前输入框，并随网页浅色 / 深色模式自动换色。
+内置 v0.3.22 的完整运行源码，无需编译、API Key、MCP 或 npm 依赖。扩展提供“自动上传 → 自动匹配”两步流程，普通创作页与无限画布分别处理当前输入框，并随网页浅色 / 深色模式自动换色。
 
 ## 安装或更新
 
@@ -20,7 +20,7 @@ metadata:
 2. 使用可用的 Python 3.9+ 运行脚本。Skill 已由平台导入时运行 `python3 "<Skill目录>/scripts/install.py" --extension-only`；Windows 可用 `py -3`。尚未安装 Skill 时，按当前宿主使用 `--platform codex` 或 `--platform claude`；其他宿主用 `--skills-dir "<平台的skills目录>"`，不要猜目录。完整参数见 [安装说明](references/installation.md)。
 3. 脚本先校验随包文件，再把扩展放入稳定目录；同版不重复写入，更新保留旧目录备份。指定目录包含不相关内容时会停止，不要添加强制覆盖来绕过。
 4. 读取脚本输出中的 `extension_dir`。浏览器应加载这个**直接包含 manifest.json 的目录**。有可用且获授权的浏览器/桌面操作工具时，继续操作扩展管理页：开发者模式 → 加载已解压的扩展程序；更新则重新加载已有扩展。没有相关工具时，给用户该绝对路径和这几个步骤。首次加载的官方流程见 [Chrome 文档](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)。
-5. 验证扩展卡片名称“即梦素材一键匹配”和版本 `0.3.21`；保存提示词、刷新即梦页面并点击视频提示词框，确认按钮出现。只有实际看见这些结果才能报告浏览器端已启用。`browser_status: manual_load_required` 仅表示文件准备完成。
+5. 验证扩展卡片名称“即梦素材一键匹配”和版本 `0.3.22`；保存提示词、刷新即梦页面并点击视频提示词框，确认按钮出现。只有实际看见这些结果才能报告浏览器端已启用。`browser_status: manual_load_required` 仅表示文件准备完成。
 
 扩展默认安装到用户目录下的 `JimengAssetMatcher/extension`，不使用临时解压目录作为最终安装位置。脚本不会修改浏览器配置、注册表、启动参数或企业策略。云端文件系统不能代替用户电脑；此时交付安装包和本机步骤。
 

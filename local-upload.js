@@ -385,6 +385,11 @@
   function captureUploadState(options = {}) {
     const documentRef = options.document || scope.document;
     const root = options.observationRoot || documentRef?.body || documentRef;
+    const canvasRoot = root?.matches?.('form[data-testid="video-generation-form"]') ? root : null;
+    const canvasState = canvasRoot && plugin.canvas?.materialState?.(
+      canvasRoot.querySelector('.ProseMirror[contenteditable="true"]'));
+    const canvasSlots = canvasRoot ? Array.from(canvasRoot.querySelectorAll('[data-slot="generation-material-slot"][data-material-type]')) : [];
+    const failedSlot = (slot) => Boolean(slot.querySelector('[data-slot="generation-material-error-icon"], [role="alert"]'));
 
     const previewElements = uniqueElements(root, [
       'img[src^="blob:"]',
@@ -431,7 +436,8 @@
     ).length;
     const errorCount = Math.max(
       visibleErrorCount,
-      countMatches(statusText, ERROR_TEXT)
+      countMatches(statusText, ERROR_TEXT),
+      canvasState ? canvasState.filter((item) => item.status === "failed").length : canvasSlots.filter(failedSlot).length
     );
     // Native rejection toasts are portals outside the composer. Read only
     // short visible notices, never whole-page text or the user's prompt.
@@ -448,9 +454,9 @@
       capacityError,
       previewSources: visiblePreviews.map((element) => element.currentSrc || element.src ||
         element.getAttribute?.("src") || "").filter(Boolean).sort().join("\n"),
-      ...(root?.matches?.('form[data-testid="video-generation-form"]') ? {
-        canvasMaterials: Array.from(root.querySelectorAll('[data-slot="generation-material-slot"][data-material-type]'))
-          .filter((slot) => slot.getAttribute("aria-busy") !== "true" &&
+      ...(canvasRoot ? {
+        canvasMaterials: canvasState ? canvasState.filter((item) => item.status === "ready").length : canvasSlots
+          .filter((slot) => !failedSlot(slot) && slot.getAttribute("aria-busy") !== "true" &&
             (slot.getAttribute("aria-busy") === "false" || slot.querySelector('img[src], video[src], audio[src]'))).length,
         canvasImages: Array.from(root.querySelectorAll('[data-slot="generation-material-slot"][data-material-type="2"]'))
           .filter((slot) => slot.getAttribute("aria-busy") !== "true" && slot.querySelector('img[src]')).length
@@ -462,7 +468,7 @@
       // Unlike loadingCount, this only follows spinners/progress nodes that are
       // inside (or immediately beside) an upload item/preview. Dreamina can keep
       // unrelated page-level loaders alive while the submitted batch is done.
-      uploadBusyCount: uploadScopedBusyCount(
+      uploadBusyCount: canvasState ? canvasState.filter((item) => item.status === "uploading").length : uploadScopedBusyCount(
         busyElements,
         visiblePreviews,
         visibleItems,
@@ -751,6 +757,7 @@
     input.hidden = true;
     const canvas = root.matches('form[data-testid="video-generation-form"]');
     input.setAttribute(canvas ? "data-jimeng-canvas-upload" : "data-jimeng-picker-request", "1");
+    if (canvas && options.canvasReplaceId) input.setAttribute("data-jimeng-canvas-replace", options.canvasReplaceId);
     assignFiles(input, files, options);
     root.appendChild(input);
     try {
@@ -760,7 +767,7 @@
           clearTimeout(timer);
           input.removeEventListener("jimeng-local-picker-result", receive);
           if (status === "dispatched") {
-            options.onFilesDispatched?.({ count: files.length, input: null });
+            options.onFilesDispatched?.({ count: files.length, filenames: files.map((file) => file.name), input: null });
             resolve();
           } else {
             reject(new LocalUploadError("NATIVE_PICKER_UNAVAILABLE",
@@ -782,7 +789,7 @@
     const decode = options.createImageBitmap || scope.createImageBitmap;
     // Validate only explicitly matched files before handing any of the batch
     // to the site. HEIC/HEIF support is left to the native uploader.
-    if (typeof decode === "function") {
+    if (typeof decode === "function" && !options.canvasBatchValidated) {
       for (const file of normalized) {
         options.assertCurrent?.();
         if (media.kindOf(file) !== "image") continue;
@@ -797,6 +804,35 @@
     const modernRoot = !options.input && options.contextRoot?.matches?.('[class*="generator-"], form[data-testid="video-generation-form"]') &&
       options.contextRoot.querySelector?.('.ProseMirror[contenteditable="true"]')
       ? options.contextRoot : null;
+    if (modernRoot?.matches('form[data-testid="video-generation-form"]') && !options.canvasBatchValidated) {
+      const editor = modernRoot.querySelector('.ProseMirror[contenteditable="true"]');
+      const materials = plugin.canvas?.materialState?.(editor);
+      if (!materials) fail("CANVAS_STATE_UNAVAILABLE", "无法确认画布素材状态，请刷新页面后重试。");
+      if (materials.some((item) => item.status === "uploading")) fail("CANVAS_UPLOAD_PENDING", "画布素材仍在上传，请等待完成后重试。");
+      const compact = (name) => String(name).normalize("NFC").replace(/\s+/gu, "");
+      const batches = [];
+      for (const file of normalized) {
+        const stem = file.name.slice(0, -(media.extensionOf(file.name).length + 1));
+        const existing = materials.filter((item) => compact(item.name) === compact(stem));
+        if (existing.length > 1 || existing.some((item) => item.status !== "failed")) {
+          fail("CANVAS_EXISTING_MATERIAL", `画布中已有同名素材：${stem}。请先点击“自动匹配”核对。`);
+        }
+        if (existing.length) batches.push({ files: [file], replaceId: existing[0].id });
+        else batches.push({ files: [file] });
+      }
+      let completed = 0;
+      let first;
+      let last;
+      for (const batch of batches) {
+        options.assertCurrent?.();
+        options.onBatchProgress?.(completed, normalized.length);
+        last = await uploadFiles(batch.files, { ...options, canvasBatchValidated: true, canvasReplaceId: batch.replaceId });
+        first ||= last;
+        completed += batch.files.length;
+        options.onBatchProgress?.(completed, normalized.length);
+      }
+      return { before: first.before, after: last.after, count: completed, input: null };
+    }
     const input = modernRoot ? null : options.input || findUploadInput(normalized, options);
     if (input && inputScore(input, normalized, { ...options, preferredInput: input }) === -Infinity) {
       fail("INCOMPATIBLE_UPLOAD_INPUT", "指定的上传入口无法接收这些素材。");

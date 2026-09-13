@@ -44,6 +44,7 @@ function request(mode, token = "") {
 }
 const original = doc;
 assert.equal(request("capture-trigger"), "synced");
+assert.equal(scrolledSelections, 1, "initial catalogue discovery must reveal the current caret without changing the document");
 assert.equal(request("accept-trigger"), "changed", "an existing @query cannot replace the source");
 assert.equal(request("cleanup-trigger"), "unchanged");
 assert.equal(doc, original, "a non-mutating menu owns no source characters");
@@ -91,7 +92,7 @@ assert.equal(request("capture-trigger"), "synced");
 doc = new Doc(doc.text + "edited");
 assert.equal(request("append-trigger"), "changed", "a concurrent edit must prevent trigger insertion");
 console.log("✓ reused queries get one isolated trigger; discovery, Unicode, spaces and concurrent edits are guarded");
-assert.equal(scrolledSelections, 4, "canvas source selections must scroll into view before the popup is opened");
+assert.ok(scrolledSelections > 4, "both source selections and initial discovery must reveal the popup anchor");
 
 doc = new Doc("@sample.");
 selection = new Selection(doc.text.length);

@@ -1,6 +1,6 @@
 # 即梦素材一键匹配 · 使用说明
 
-**v0.3.21 · Chrome / Edge 浏览器扩展 · MIT 开源**
+**v0.3.22 · Chrome / Edge 浏览器扩展 · MIT 开源**
 
 根据提示词中的 `@素材名`，从本地文件夹自动上传对应的图片、视频和音频，再把网页原生素材标签添加到原文字后面。支持即梦普通创作页和无限画布。
 
@@ -15,6 +15,15 @@ git clone --depth 1 https://github.com/yuanlai-233/jimeng-asset-matcher.git && p
 ```
 
 Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claude`。脚本会校验文件、保留旧版备份，并输出需要在 Chrome / Edge 扩展管理页加载的目录；它不会自动上传素材或提交生成任务。
+
+## v0.3.22 · 画布连续匹配与上传恢复
+
+- 修复展开生成器时原生素材菜单被误判为不可点击、清理菜单时意外关闭生成器的问题。
+- 首次读取目录与逐项插入都滚动原生光标，支持长提示词中的连续引用。
+- 匹配前核对当前节点的原生上传状态，准确指出失败项，不再只报“素材目录不完整”。
+- 再次点击“自动上传”时只原位替换失败的同名素材，保留成功素材、卡片位置和提示词。
+- 新增素材逐个上传，等待上一项完成再继续；中断后只记录实际已提交的文件，避免漏传或重复上传。
+- 真实展开画布通过 50 素材、150 处引用测试：90 图片、30 视频、30 音频标签全部紧邻原文；重复匹配不增加标签，重复上传不增加素材。
 
 ## v0.3.21 · 完整 50 素材画布匹配修复
 
@@ -43,8 +52,8 @@ Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claud
 
 | 下载内容 | 用途 |
 | --- | --- |
-| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.21/jimeng-asset-matcher-v0.3.21.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
-| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.21/jimeng-asset-matcher-skill-v0.3.21.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
+| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.22/jimeng-asset-matcher-v0.3.22.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
+| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.22/jimeng-asset-matcher-skill-v0.3.22.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
 | [两图入门素材（可选）](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.17/quick-start-v0.3.17.zip) | 两张演示图片及提示词，用来熟悉操作。 |
 | [50 项混合素材（可选）](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.17/test-materials-50-v0.3.17.zip) | 30 张图片、10 段视频、10 段音频及提示词，用来体验批量匹配。 |
 
@@ -58,7 +67,7 @@ Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claud
 4. 选择**直接包含 `manifest.json`** 的文件夹，不要选择 ZIP 文件或外层空目录。
 5. 回到即梦并刷新页面，点击视频提示词框。首次出现说明时，点击 **开始使用**。
 
-![安装示意（旧版截图）：当前更新后请确认版本为 0.3.21](docs/images/01-install.png)
+![安装示意（旧版截图）：当前更新后请确认版本为 0.3.22](docs/images/01-install.png)
 
 更新时，用新版覆盖原安装文件夹，点击扩展的 **重新加载**，再刷新即梦。刷新前先复制保存提示词。只启用一个版本；如果还装着旧油猴脚本，请先停用。安装后保留该文件夹，浏览器需要从这里读取程序。
 

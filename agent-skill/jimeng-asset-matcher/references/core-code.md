@@ -1,6 +1,6 @@
 # 核心代码说明
 
-本包保留 v0.3.21 发布包中全部 26 个运行文件，位于 `assets/extension/`，包含 19 个 JavaScript 文件、CSS、manifest、4 个图标与 MIT 许可证。除发布仓库中的 README、CHANGELOG、截图和 `.gitignore` 外，扩展运行文件与 v0.3.21 发布目录逐文件一致，未重写核心逻辑。
+本包保留 v0.3.22 发布包中全部 26 个运行文件，位于 `assets/extension/`，包含 19 个 JavaScript 文件、CSS、manifest、4 个图标与 MIT 许可证。除发布仓库中的 README、CHANGELOG、截图和 `.gitignore` 外，扩展运行文件与 v0.3.22 发布目录逐文件一致，未重写核心逻辑。
 
 代码使用原生 JavaScript，不需要构建或 npm 依赖。浏览器按 `manifest.json` 的声明顺序加载。本 Skill 不附带测试素材、测试脚本、验收截图或历史调试产物。
 

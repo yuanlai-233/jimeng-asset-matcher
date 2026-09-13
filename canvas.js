@@ -66,6 +66,21 @@
         [media.currentSrc || media.src || "", media.poster || "", media.alt || ""])
     ]));
   }
+  function materialState(editor) {
+    const form = formFor(editor);
+    if (!form?.dispatchEvent) return null;
+    const key = "data-jimeng-canvas-material-state";
+    form.removeAttribute(key);
+    form.dispatchEvent(new Event("jimeng-canvas-material-state-request", { bubbles: true }));
+    try {
+      const entries = JSON.parse(form.getAttribute(key) || "null");
+      const slots = materialSlots(editor);
+      return Array.isArray(entries) && entries.length === slots.length &&
+        entries.every((entry) => typeof entry.id === "string" && typeof entry.name === "string" &&
+          ["ready", "failed", "uploading"].includes(entry.status)) ? entries : null;
+    } catch (_error) { return null; }
+    finally { form.removeAttribute(key); }
+  }
   function capturePicker(editor) {
     // Shared by ordinary and canvas Tiptap editors. The upload state above
     // remains strictly per canvas node; these WeakMaps only own transient queries.
@@ -96,15 +111,16 @@
   function cleanupPicker(editor) {
     const owner = activePickerEditor || editor;
     if (!owner || !pickerTexts.has(owner)) return;
-    plugin.editor.nativeSelectionAction(owner, "cleanup-trigger");
+    const restored = plugin.editor.nativeSelectionAction(owner, "cleanup-trigger");
     pickerTexts.delete(owner);
     activePickerEditor = null;
+    return restored;
   }
   function cleanupInsertedTrigger(editor) {
     if (pickerTexts.has(editor)) {
       plugin.editor.nativeSelectionAction(editor, "cleanup-inserted-trigger");
     }
   }
-  plugin.canvas = { uploadStateFor, formFor, referenceButton, sendButton, editorArea, pickerIsOpen, materialSlots, materialSignature,
+  plugin.canvas = { uploadStateFor, formFor, referenceButton, sendButton, editorArea, pickerIsOpen, materialSlots, materialSignature, materialState,
     waitForEditorSettled, capturePicker, acceptPicker, expectedPickerText, cleanupPicker, cleanupInsertedTrigger };
 })(globalThis);

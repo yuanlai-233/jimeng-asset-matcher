@@ -374,6 +374,23 @@
     throw error;
   }
 
+  function reconcileCanvasMaterialState(editor, index = null) {
+    const materials = plugin.canvas?.materialState?.(editor);
+    if (!materials || materials.some((item) => item.status === "uploading")) return materials;
+    const names = materials.map((item) => item.name);
+    const ready = materials.filter((item) => item.status === "ready").map((item) => item.name);
+    const pending = pendingLocalUploadNames(editor);
+    const originals = [...pending, ...verifiedLocalUploadNames(editor),
+      ...(index?.records || []).map((record) => record.assetName),
+      ...matcher.matchPromptToCandidates(plugin.editor.plainText(editor), names).map((match) => match.token.slice(1))];
+    const ledger = plugin.canvas.uploadStateFor(editor);
+    ledger.verified = new Set(originals.filter((name) => nativeNameForUpload(name, ready)));
+    // The native cards prove terminal results for these dispatched files.
+    // An unknown/missing card remains pending rather than enabling duplicates.
+    if (pending.every((name) => nativeNameForUpload(name, names))) clearLocalUploadReconcile(editor);
+    return materials;
+  }
+
   function reconcileLocalUploadFromCandidateCatalog(editor, candidateNames) {
     const pendingNames = pendingLocalUploadNames(editor);
     if (!pendingNames.length) return { missing: [], pendingNames: [] };
@@ -424,6 +441,7 @@
     // A dispatched batch is the strongest duplicate-upload signal we have.
     // Check it before asking for directory permission, walking folders or
     // reading any File so a repeated click is both safe and instantaneous.
+    reconcileCanvasMaterialState(editor);
     stopIfLocalUploadNeedsReconcile(editor);
 
     plugin.state.localUploading = true;
@@ -434,6 +452,7 @@
     try {
       const handle = await acquireLocalDirectory(forceDirectory);
       const index = await localAssetIndex(handle, button);
+      const canvasMaterials = reconcileCanvasMaterialState(editor, index);
       const initialPlan = localWorkflow.planLocalUpload(
         prompt,
         index,
@@ -470,7 +489,9 @@
       const imageLimit = plugin.localUpload.imageLimitForEditor?.(editor);
       const mediaLimits = plugin.localUpload.mediaLimitsForEditor?.(editor) || {};
       const canvasCapacity = plugin.localUpload.canvasCapacityForEditor?.(editor);
-      if (canvasCapacity && canvasCapacity.used + plan.filesToUpload.length > canvasCapacity.limit) {
+      const replacementCount = (canvasMaterials || []).filter((item) => item.status === "failed" &&
+        plan.filesToUpload.some((record) => nativeNameForUpload(record.assetName, [item.name]))).length;
+      if (canvasCapacity && canvasCapacity.used + plan.filesToUpload.length - replacementCount > canvasCapacity.limit) {
         throw new Error(`当前画布模式最多添加 ${canvasCapacity.limit} 个素材；已有 ${canvasCapacity.used} 项，本次需新增 ${plan.filesToUpload.length} 项。本次未上传，请减少引用或移除不用的参考。`);
       }
       const verifiedNames = new Set(verifiedLocalUploadNames(editor));
@@ -513,9 +534,13 @@
           plan.filesToUpload.map((record) => record.assetName).filter(Boolean)
         ));
         let dispatchMarked = false;
-        const markDispatched = () => {
+        const dispatchedNames = new Set();
+        const markDispatched = (event) => {
           dispatchMarked = true;
-          markLocalUploadDispatched(editor, pendingNames);
+          const names = event?.filenames ? plan.filesToUpload.filter((record) =>
+            event.filenames.includes(record.filename)).map((record) => record.assetName) : pendingNames;
+          names.forEach((name) => dispatchedNames.add(name));
+          markLocalUploadDispatched(editor, [...dispatchedNames]);
         };
         try {
           await plugin.localUpload.uploadFiles(
@@ -523,6 +548,7 @@
             {
               ...(contextRoot ? { contextRoot } : {}),
               assertCurrent: () => assertLocalPromptCurrent(editor, prompt),
+              onBatchProgress: (completed, total) => { button.textContent = `上传 ${completed}/${total} 项…`; },
               onFilesDispatched: markDispatched
             }
           );
@@ -532,7 +558,9 @@
           }
           if (dispatchMarked && error?.code === "UPLOAD_REJECTED") {
             markUploadRejected(editor);
-            error.message =
+            error.message = plugin.canvas?.formFor?.(editor)
+              ? "即梦报告素材上传失败。再次点击“自动上传”会只重试失败项，保留已成功的素材和原有卡片位置。"
+              :
               "即梦报告本批至少有一项素材上传失败。请先点击“自动匹配”核对已成功项，" +
               "再点“自动上传”时只会补传仍缺少的文件。";
           }
@@ -779,6 +807,16 @@
       }
       const editor = preferredEditor || activeEditor;
       if (!editor) throw new Error("没有找到提示词输入框");
+      const canvasMaterials = reconcileCanvasMaterialState(editor);
+      const failedMaterials = canvasMaterials?.filter((item) => item.status === "failed") || [];
+      if (failedMaterials.length) {
+        const error = new Error(`${failedMaterials.length} 项素材上传失败：${compactNames(failedMaterials.map((item) => item.name))}。请点击“自动上传”重试失败项；已成功的素材和提示词会保留。`);
+        error.code = "CANVAS_UPLOAD_FAILED";
+        throw error;
+      }
+      if (canvasMaterials?.some((item) => item.status === "uploading")) {
+        throw new Error("画布素材仍在上传，请等上传完成后再点击“自动匹配”。");
+      }
       plugin.ui.trackMatchStatusEditor(editor);
       const wasVerifiedForEditor = verifiedBeforeRun &&
         verifiedEditorBeforeRun === editor;

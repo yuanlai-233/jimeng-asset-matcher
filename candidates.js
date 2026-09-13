@@ -19,7 +19,11 @@
     const editor = plugin.editor?.findEditor?.();
     // Removing our temporary trigger can reactivate the preceding @query.
     // Clean up before Escape so the native suggestion plugin closes last.
-    plugin.canvas?.cleanupPicker(editor);
+    const restoredTrigger = plugin.canvas?.cleanupPicker(editor);
+    const canvasForm = editor?.closest?.('form[data-testid="video-generation-form"]');
+    // Removing our query already dismisses the native menu. An extra Escape
+    // would close the expanded generator dialog (or deselect its canvas node).
+    if (canvasForm && (restoredTrigger || !plugin.canvas?.pickerIsOpen?.(editor))) return;
     const target = typeof document.activeElement?.dispatchEvent === "function"
       ? document.activeElement
       : document;
@@ -32,7 +36,7 @@
     // This surface is not an upload, send, or @ toggle button.
     // Canvas handles Escape itself. A fabricated outside click on its form
     // bubbles into the canvas and deselects the node between two insertions.
-    if (editor?.closest?.('form[data-testid="video-generation-form"]')) return;
+    if (canvasForm) return;
     const surface = editor?.matches?.(".ProseMirror") &&
       editor.closest?.('[class*="generator-"]');
     if (surface && typeof MouseEvent === "function") {
@@ -160,6 +164,9 @@
   // Popup portals also animate by hiding a parent, so interaction checks must
   // reject a row when any ancestor has become inert/transparent/non-clickable.
   function styleTreeAllows(element, { requirePointerEvents = true } = {}) {
+    // pointer-events is inherited but descendants can explicitly restore auto.
+    // The expanded canvas dialog does this beneath body { pointer-events:none }.
+    if (requirePointerEvents && styleFor(element).pointerEvents === "none") return false;
     let current = element;
     for (let depth = 0; current && depth < 40; depth += 1) {
       const style = styleFor(current);
@@ -170,8 +177,7 @@
         current.getAttribute?.("aria-hidden") === "true" ||
         closedPopupState.test(state) || style.display === "none" ||
         style.visibility === "hidden" || style.visibility === "collapse" ||
-        Number.isFinite(opacity) && opacity <= 0 ||
-        requirePointerEvents && style.pointerEvents === "none") {
+        Number.isFinite(opacity) && opacity <= 0) {
         return false;
       }
       current = current.parentElement;

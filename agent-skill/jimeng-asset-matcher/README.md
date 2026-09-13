@@ -1,6 +1,6 @@
 # 即梦素材一键匹配 Skill
 
-**v0.3.21 · 分发包修订 1 · MIT · 含完整扩展核心源码**
+**v0.3.22 · 分发包修订 1 · MIT · 含完整扩展核心源码**
 
 把“即梦素材一键匹配”交给 AI 助手安装、讲解和排错。内置原版 Chrome / Edge 扩展，根据提示词中的 `@完整素材名` 自动上传本地图片、视频和音频，再追加网页原生引用标签。
 
@@ -51,7 +51,7 @@ Windows 将 `python3` 换成 `py -3`，或双击 `install-windows.cmd`；默认�
 | --- | --- |
 | [SKILL.md](SKILL.md) | 通用 Agent Skills 入口 |
 | [scripts/install.py](scripts/install.py) | 离线安装、预览、校验、备份 |
-| [assets/extension](assets/extension) | v0.3.21 完整运行源码、图标及 manifest |
+| [assets/extension](assets/extension) | v0.3.22 完整运行源码、图标及 manifest |
 | [references/installation.md](references/installation.md) | 安装位置、更新、回退、卸载 |
 | [references/user-guide.md](references/user-guide.md) | 可离线阅读的图文说明 |
 | [references/core-code.md](references/core-code.md) | 核心模块和实现逻辑 |
@@ -61,7 +61,7 @@ Windows 将 `python3` 换成 `py -3`，或双击 `install-windows.cmd`；默认�
 
 离线安装不访问任何服务器；使用扩展时，明确命中的素材通过即梦/Dreamina 网页原生上传。项目沿用 [隐私说明](references/PRIVACY.md) 和 [非官方项目声明](references/DISCLAIMER.md)。
 
-上游项目：[GitHub](https://github.com/yuanlai-233/jimeng-asset-matcher) · [v0.3.21 发布](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/tag/v0.3.21)。
+上游项目：[GitHub](https://github.com/yuanlai-233/jimeng-asset-matcher) · [v0.3.22 发布](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/tag/v0.3.22)。
 
 赞赏支持：
 

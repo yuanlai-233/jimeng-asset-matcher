@@ -6,6 +6,36 @@
   const visible = (element) => Boolean(element?.isConnected &&
     element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) &&
     element.getBoundingClientRect().height > 0);
+  const slotSelector = '[data-slot="generation-material-slot"][data-material-type]';
+  // Read only the props of this form's native material cards. Failed uploads
+  // keep their filename here even when the @ menu omits them. Do not read
+  // account state, URLs, file bytes, or unrelated React ancestors.
+  function materialEntry(slot) {
+    let fiber = slot[Object.keys(slot).find((key) => key.startsWith("__reactFiber"))];
+    for (let depth = 0; fiber && depth < 6; depth++, fiber = fiber.return) {
+      const props = fiber.memoizedProps;
+      const material = props?.material;
+      if (!material || typeof material.id !== "string" || typeof material.fileName !== "string") continue;
+      const failed = props.task?.phase === "failed" || Boolean(slot.querySelector('[data-slot="generation-material-error-icon"]'));
+      const busy = slot.getAttribute("aria-busy") === "true" ||
+        Boolean(props.task && !["failed", "completed", "success", "succeeded"].includes(props.task.phase));
+      return { slot, id: material.id, name: material.fileName, kind: material.type,
+        status: failed ? "failed" : busy ? "uploading" : "ready" };
+    }
+    return null;
+  }
+  function materialsFor(form) {
+    if (!form?.matches?.(formSelector)) return null;
+    const slots = Array.from(form.querySelectorAll(slotSelector));
+    const entries = slots.map(materialEntry);
+    return entries.every(Boolean) ? entries : null;
+  }
+  document.addEventListener("jimeng-canvas-material-state-request", (event) => {
+    const form = event.target;
+    if (!form?.matches?.(formSelector) || !form.isConnected || !form.getAttribute("data-target-id")) return;
+    const entries = materialsFor(form);
+    form.setAttribute("data-jimeng-canvas-material-state", JSON.stringify(entries?.map(({ slot, ...entry }) => entry) ?? null));
+  });
 
   document.addEventListener("jimeng-canvas-upload-request", async (event) => {
     const carrier = event.target;
@@ -17,9 +47,16 @@
     };
     const form = carrier.parentElement;
     const editors = Array.from(form?.querySelectorAll?.('.ProseMirror[contenteditable="true"]') || []);
-    const buttons = Array.from(form?.querySelectorAll?.('button[aria-label="添加参考"]') || [])
-      .filter(visible);
     const files = Array.from(carrier.files || []);
+    const replaceId = carrier.getAttribute("data-jimeng-canvas-replace");
+    const replacement = replaceId ? materialsFor(form)?.find((entry) => entry.id === replaceId) : null;
+    const compact = (name) => String(name).normalize("NFC").replace(/\s+/gu, "");
+    const fileStem = (file) => file.name.slice(0, -(media.extensionOf(file.name).length + 1));
+    if (replaceId && (!replacement || replacement.status !== "failed" || files.length !== 1 ||
+      compact(replacement.name) !== compact(fileStem(files[0])) ||
+      ({ 2: "image", 3: "video", 4: "audio" })[replacement.kind] !== media.kindOf(files[0]))) return report("invalid-replacement");
+    const buttons = replacement ? [replacement.slot] :
+      Array.from(form?.querySelectorAll?.('button[aria-label="添加参考"]') || []).filter(visible);
     if (active || !form?.matches(formSelector) || !form.getAttribute("data-target-id") ||
       editors.length !== 1 || !visible(editors[0]) || buttons.length !== 1 ||
       buttons[0].disabled || buttons[0].getAttribute("aria-disabled") === "true" ||
@@ -56,7 +93,9 @@
       if (!armed || done || input.type !== "file") return false;
       // Existing inputs replace a card or upload to the entire canvas. Only
       // the fresh input created by this node's native upload menu is eligible.
-      if (originalInputs.has(input) || !current() || files.length > 1 && !input.multiple ||
+      const ownedReplacementInput = replacement && input.closest?.(formSelector) === form &&
+        replacement.slot.closest?.('[data-generation-material-card]')?.contains(input);
+      if (originalInputs.has(input) && !ownedReplacementInput || !current() || files.length > 1 && !input.multiple ||
         !media.acceptsFiles(String(input.accept || "").split(",").map((token) => token.trim()).filter(Boolean), files)) {
         stop("incompatible");
         return true;
@@ -90,6 +129,17 @@
       timer = setTimeout(() => stop("timeout"), 1800);
       document.addEventListener("pointerdown", interrupt, true);
       document.addEventListener("keydown", interrupt, true);
+      if (replacement) {
+        // Replace only an explicitly failed, same-name/same-kind card. Keep
+        // its position and every successful reference instead of adding copies.
+        replacement.slot.scrollIntoView({ block: "nearest", inline: "nearest" });
+        HTMLInputElement.prototype.click = click;
+        if (originalShowPicker) HTMLInputElement.prototype.showPicker = showPicker;
+        if (typeof originalOpen === "function") window.showOpenFilePicker = open;
+        armed = true;
+        replacement.slot.click();
+        return;
+      }
       if (button.getAttribute("aria-expanded") !== "true") {
         button.dispatchEvent(new PointerEvent("pointerdown", {
           bubbles: true, button: 0, pointerId: 1, pointerType: "mouse", isPrimary: true
