@@ -6,6 +6,19 @@
   const plugin = (scope.JimengAssetPlugin ||= {});
   plugin.version = scope.chrome?.runtime?.getManifest?.().version || "development";
 
+  // Local file lookup keeps exact whitespace semantics. Only the canvas's
+  // native catalogue needs aliases for the spaces the website removes.
+  const matcher = scope.JimengAssetMatcher;
+  const nativeMatchOptions = () => ({ allowCollapsedWhitespace: Boolean(
+    plugin.canvas?.formFor?.(plugin.editor?.findEditor?.())
+  ) });
+  plugin.matcher = {
+    ...matcher,
+    matchPromptToCandidates: (prompt, names) => matcher.matchPromptToCandidates(prompt, names, nativeMatchOptions()),
+    missingPromptReferences: (prompt, names) => matcher.missingPromptReferences(prompt, names, nativeMatchOptions()),
+    unexpectedCandidateNames: (prompt, names, counts) => matcher.unexpectedCandidateNames(prompt, names, counts, nativeMatchOptions())
+  };
+
   plugin.constants = Object.freeze({
     buttonId: "jimeng-asset-match-button",
     confirmId: "jimeng-send-confirm",

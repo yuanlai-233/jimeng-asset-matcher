@@ -1,12 +1,12 @@
 # 即梦素材一键匹配 · 使用说明
 
-**v0.3.20 · Chrome / Edge 浏览器扩展 · MIT 开源**
+**v0.3.21 · Chrome / Edge 浏览器扩展 · MIT 开源**
 
 根据提示词中的 `@素材名`，从本地文件夹自动上传对应的图片、视频和音频，再把网页原生素材标签添加到原文字后面。支持即梦普通创作页和无限画布。
 
 **写提示词 → 自动上传 → 等素材就绪 → 自动匹配 → 检查后自行生成。**
 
-## v0.3.20 · 修复画布自动匹配
+## v0.3.21 · 修复画布自动匹配
 
 - 兼容新版画布的图片、视频、音频原生候选缩略图标记，修复菜单中存在素材却匹配不到的问题。
 - 匹配前等待画布富文本回写稳定，再定位引用光标，避免连续匹配时菜单意外关闭或插入中断。
@@ -27,8 +27,8 @@
 
 | 下载内容 | 用途 |
 | --- | --- |
-| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.20/jimeng-asset-matcher-v0.3.20.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
-| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.20/jimeng-asset-matcher-skill-v0.3.20.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
+| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.21/jimeng-asset-matcher-v0.3.21.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
+| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.21/jimeng-asset-matcher-skill-v0.3.21.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
 
 这套 Skill 不包含测试图片、测试视频、测试音频、样例提示词或验收产物。使用时选择自己的素材目录。
 
@@ -40,7 +40,7 @@
 4. 选择**直接包含 `manifest.json`** 的文件夹，不要选择 ZIP 文件或外层空目录。
 5. 回到即梦并刷新页面，点击视频提示词框。首次出现说明时，点击 **开始使用**。
 
-![安装示意（旧版截图）：当前更新后请确认版本为 0.3.20](images/01-install.png)
+![安装示意（旧版截图）：当前更新后请确认版本为 0.3.21](images/01-install.png)
 
 更新时，用新版覆盖原安装文件夹，点击扩展的 **重新加载**，再刷新即梦。刷新前先复制保存提示词。只启用一个版本；如果还装着旧油猴脚本，请先停用。安装后保留该文件夹，浏览器需要从这里读取程序。
 

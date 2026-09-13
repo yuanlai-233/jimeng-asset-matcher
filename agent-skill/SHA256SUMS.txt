@@ -1,0 +1,3 @@
+8f6f3c6c353e22dc38d21e0824fb8f157f26257d3bf4997efa1d8df933569837  jimeng-asset-matcher-skill-v0.3.21.zip
+f31039c7cb152f7abbea1c66801806c83826e4e42dc9ff55998d905f631e0e1b  jimeng-asset-matcher-skill-v0.3.21-flat.zip
+8f6f3c6c353e22dc38d21e0824fb8f157f26257d3bf4997efa1d8df933569837  jimeng-asset-matcher-v0.3.21.skill

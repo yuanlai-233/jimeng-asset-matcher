@@ -198,7 +198,12 @@
       }
       const next = view.state.selection.constructor.near(doc.resolve(pos), -1);
       if (next.from !== pos || next.to !== pos) return result("invalid-position");
-      view.dispatch(view.state.tr.setSelection(next));
+      const selectionTr = view.state.tr.setSelection(next);
+      // Long canvas prompts keep off-screen paragraphs mounted. The mention
+      // popup anchors to the caret, so make the native selection visible before
+      // opening it; otherwise the popup exists entirely outside the viewport.
+      if (canvasForm) selectionTr.scrollIntoView();
+      view.dispatch(selectionTr);
       view.focus();
       if (view.state.doc !== doc || view.state.selection.from !== pos || view.state.selection.to !== pos) {
         return result("changed");

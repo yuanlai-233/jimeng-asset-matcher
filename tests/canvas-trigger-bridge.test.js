@@ -20,8 +20,9 @@ const editor = { matches: () => true, isConnected: true,
   getAttribute: (key) => attrs.get(key), setAttribute: (key, value) => attrs.set(key, value) };
 let doc = new Doc("原文 @sample 后文");
 let selection = new Selection(10);
+let scrolledSelections = 0;
 const state = { get doc() { return doc; }, get selection() { return selection; },
-  get tr() { return { doc, setSelection(value) { this.selection = value; return this; },
+  get tr() { return { doc, scrollIntoView() { scrolledSelections += 1; return this; }, setSelection(value) { this.selection = value; return this; },
   insertText(text, from, to) { this.doc = new Doc(doc.text.slice(0, from) + text + doc.text.slice(to));
     this.selection = new Selection(from + text.length); return this; }, delete(from, to) {
     this.doc = new Doc(doc.text.slice(0, from) + doc.text.slice(to)); return this;
@@ -90,6 +91,7 @@ assert.equal(request("capture-trigger"), "synced");
 doc = new Doc(doc.text + "edited");
 assert.equal(request("append-trigger"), "changed", "a concurrent edit must prevent trigger insertion");
 console.log("✓ reused queries get one isolated trigger; discovery, Unicode, spaces and concurrent edits are guarded");
+assert.equal(scrolledSelections, 4, "canvas source selections must scroll into view before the popup is opened");
 
 doc = new Doc("@sample.");
 selection = new Selection(doc.text.length);
