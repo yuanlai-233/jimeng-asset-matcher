@@ -99,9 +99,9 @@
 
   // Keep every missing slot, but let known filenames own their exact boundary
   // (including names with spaces or names immediately followed by CJK prose).
-  function missingPromptReferences(prompt, candidateNames) {
+  function missingPromptReferences(prompt, candidateNames, options) {
     const resolvedStarts = new Set(
-      matchPromptToCandidates(prompt, candidateNames).map((match) => match.start)
+      matchPromptToCandidates(prompt, candidateNames, options).map((match) => match.start)
     );
     return parsePromptReferences(prompt, { deduplicate: false })
       .filter((reference) => !resolvedStarts.has(reference.start));
@@ -114,7 +114,7 @@
     return Boolean(reference && match && reference.start === match.start);
   }
 
-  function matchPromptToCandidates(prompt, candidateNames) {
+  function matchPromptToCandidates(prompt, candidateNames, { allowCollapsedWhitespace = false } = {}) {
     const text = String(prompt || "");
     const uniqueCandidates = [];
     const seen = new Set();
@@ -165,6 +165,29 @@
     const sorted = uniqueCandidates.sort((a, b) => b.length - a.length);
     for (const name of sorted) {
       collect(name, `@${name}`);
+    }
+
+    // Canvas removes spaces from uploaded filenames. Resolve only a complete,
+    // explicitly delimited source name against a unique compact native name.
+    // Keep the original token/offsets and never loosen local-file lookup or
+    // numeric/ASCII prefix boundaries. Exact spelling always wins above.
+    if (allowCollapsedWhitespace) {
+      const compactNames = new Map();
+      for (const name of uniqueCandidates) {
+        const key = name.replace(/\s/gu, "");
+        compactNames.set(key, compactNames.has(key) ? null : name);
+      }
+      const pattern = /@([^\u0000@\n\r，。！？；、,.!?;：:[\]{}<>]{1,160})/gu;
+      for (const found of text.matchAll(pattern)) {
+        const source = found[1].replace(/\s+$/u, "");
+        if (!/\s/u.test(source) || !explicitAtStart(text, found.index)) continue;
+        const name = compactNames.get(source.replace(/\s/gu, ""));
+        const token = `@${source}`;
+        const end = found.index + token.length;
+        if (!name || overlaps(found.index, end) || /^\.[A-Za-z0-9]/u.test(text.slice(end))) continue;
+        occupied.push({ start: found.index, end });
+        matches.push({ name, token, prefixed: true, start: found.index, end });
+      }
     }
 
     matches.sort((a, b) => a.start - b.start || b.name.length - a.name.length);
@@ -288,7 +311,7 @@
   // Uploaded candidates that appear neither as an explicit @ reference nor as
   // an existing native mention are likely accidental extras. Bare same-name
   // prose is intentionally ignored by the product flow.
-  function unexpectedCandidateNames(prompt, candidateNames, currentCounts = new Map()) {
+  function unexpectedCandidateNames(prompt, candidateNames, currentCounts = new Map(), options) {
     const names = [];
     const seen = new Set();
     for (const value of candidateNames || []) {
@@ -298,7 +321,7 @@
       names.push(name);
     }
     const referenced = new Set(
-      matchPromptToCandidates(prompt, names).map((match) => match.name)
+      matchPromptToCandidates(prompt, names, options).map((match) => match.name)
     );
     for (const [name, count] of currentCounts || []) {
       if (count > 0) referenced.add(normalizeAssetName(name));

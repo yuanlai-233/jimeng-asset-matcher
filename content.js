@@ -11,7 +11,7 @@
   scope.__JIMENG_ASSET_MATCHER_LOADED__ = plugin.version;
   document.documentElement.setAttribute(runtimeMarker, plugin.version);
 
-  const matcher = scope.JimengAssetMatcher;
+  const matcher = plugin.matcher || scope.JimengAssetMatcher;
   const localAssets = scope.JimengLocalAssets;
   const localDirectory = scope.JimengLocalDirectory;
   const localWorkflow = scope.JimengLocalWorkflow;
@@ -323,6 +323,12 @@
     return Array.from(verified);
   }
 
+  function nativeNameForUpload(name, candidateNames) {
+    const token = `@${matcher.normalizeAssetName(name)}`;
+    return matcher.matchPromptToCandidates(token, candidateNames)
+      .find((match) => match.start === 0 && match.token === token)?.name || "";
+  }
+
   function pruneVerifiedLocalUploadsFromCandidateCatalog(editor, candidateNames) {
     const verifiedNames = verifiedLocalUploadNames(editor);
     // An empty menu can be a transient render failure, so never use it to
@@ -334,8 +340,8 @@
     const available = new Set((candidateNames || []).map((name) =>
       matcher.normalizeAssetName(name)
     ));
-    const retained = verifiedNames.filter((name) => available.has(name));
-    const removed = verifiedNames.filter((name) => !available.has(name));
+    const retained = verifiedNames.filter((name) => nativeNameForUpload(name, available));
+    const removed = verifiedNames.filter((name) => !nativeNameForUpload(name, available));
     if (!removed.length) return [];
     if (canvas) {
       canvas.verified = new Set(retained);
@@ -375,7 +381,7 @@
       matcher.normalizeAssetName(name)
     ));
     const missing = pendingNames.filter((name) =>
-      !available.has(matcher.normalizeAssetName(name))
+      !nativeNameForUpload(name, available)
     );
     if (!missing.length) {
       markLocalUploadVerified(editor, pendingNames);
@@ -796,7 +802,7 @@
       const localReferenceStarts = new Set(pendingNames.length
         ? matcher.matchPromptToCandidates(prompt, localNames).map((match) => match.start)
         : []);
-      const usesPendingLocalNames = pendingNames.length > 0 &&
+      const usesPendingLocalNames = !plugin.canvas?.formFor?.(editor) && pendingNames.length > 0 &&
         requested.every((reference) => localReferenceStarts.has(reference.start));
       plugin.ui.toast(
         usesPendingLocalNames
@@ -940,7 +946,8 @@
         const confirmedPendingNames = [];
         const unconfirmedPendingNames = [];
         for (const name of pendingNames) {
-          if ((mentionCounts.get(name) || 0) < 1) {
+          const nativeName = nativeNameForUpload(name, candidateNames);
+          if ((mentionCounts.get(nativeName) || 0) < 1) {
             unconfirmedPendingNames.push(name);
             if (!failures.has(name)) {
               failures.set(name, "尚未确认生成对应的原生素材标签");

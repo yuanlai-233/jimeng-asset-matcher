@@ -7,7 +7,7 @@
     missingPromptReferences,
     normalizeAssetName,
     normalizeText
-  } = scope.JimengAssetMatcher;
+  } = plugin.matcher || scope.JimengAssetMatcher;
   const { highlightName, overlayId } = plugin.constants;
   const maxUnmatchedNameLength = 16;
 

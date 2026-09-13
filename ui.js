@@ -7,7 +7,7 @@
     normalizeText,
     pruneInactiveMentionTargets,
     unexpectedCandidateNames
-  } = scope.JimengAssetMatcher;
+  } = plugin.matcher || scope.JimengAssetMatcher;
   const {
     buttonId,
     confirmId,
