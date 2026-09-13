@@ -37,5 +37,8 @@ tmp/
 *.mp4
 *.webm
 
+# The mixed-media regression fixture intentionally includes small MP4 samples.
+!examples/mixed-names/materials/02_视频_10段/*.mp4
+
 # High-resolution generation source; runtime icons are tracked separately.
 /icons/mobius-master.png

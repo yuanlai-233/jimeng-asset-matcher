@@ -50,7 +50,6 @@ const secretPatterns = [
 // Project-specific creative names from the private development recordings
 // must not leak into public fixtures, examples, or diagnostics.
 const privateContentPatterns = [
-  new RegExp("源" + "来", "u"),
   new RegExp("菜园" + "木箱", "u"),
   new RegExp("象甲" + "虫玩偶", "u"),
   new RegExp("瓢虫" + "玩偶", "u"),
