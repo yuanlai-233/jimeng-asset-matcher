@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "即梦素材一键匹配",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "分步上传本地图片、视频和音频并手动匹配，在原文字后追加即梦/Dreamina 原生 @ 标签。",
   "permissions": [
     "storage"

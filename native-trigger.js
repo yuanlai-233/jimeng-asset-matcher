@@ -372,6 +372,10 @@
       editor.focus();
     }
     await plugin.sleep(0);
+    if (plugin.canvas?.formFor(editor) && plugin.canvas.waitForEditorSettled &&
+      !await plugin.canvas.waitForEditorSettled(editor)) {
+      return outcome(false, "editor-not-settled");
+    }
     let button = await resolveNativeButton(editor);
     if (!button) return outcome(false, "native-button-missing");
     if (button.getAttribute("aria-expanded") === "true") {

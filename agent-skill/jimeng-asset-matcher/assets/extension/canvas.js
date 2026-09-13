@@ -74,6 +74,11 @@
     activePickerEditor = editor;
     return true;
   }
+  async function waitForEditorSettled(editor) {
+    plugin.editor.nativeSelectionAction(editor, "begin-settle");
+    return Boolean(await plugin.waitFor(() => formFor(editor) &&
+      plugin.editor.nativeSelectionAction(editor, "settle"), 2400, 50));
+  }
   function acceptPicker(editor) {
     if (!plugin.editor.nativeSelectionAction(editor, "accept-trigger")) {
       if (!plugin.editor.nativeSelectionAction(editor, "append-trigger") ||
@@ -101,5 +106,5 @@
     }
   }
   plugin.canvas = { uploadStateFor, formFor, referenceButton, sendButton, editorArea, pickerIsOpen, materialSlots, materialSignature,
-    capturePicker, acceptPicker, expectedPickerText, cleanupPicker, cleanupInsertedTrigger };
+    waitForEditorSettled, capturePicker, acceptPicker, expectedPickerText, cleanupPicker, cleanupInsertedTrigger };
 })(globalThis);

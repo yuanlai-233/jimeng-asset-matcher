@@ -1,6 +1,6 @@
 # 即梦素材一键匹配 · 使用说明
 
-**v0.3.19 · Chrome / Edge 浏览器扩展 · MIT 开源**
+**v0.3.20 · Chrome / Edge 浏览器扩展 · MIT 开源**
 
 根据提示词中的 `@素材名`，从本地文件夹自动上传对应的图片、视频和音频，再把网页原生素材标签添加到原文字后面。支持即梦普通创作页和无限画布。
 
@@ -15,6 +15,13 @@ git clone --depth 1 https://github.com/yuanlai-233/jimeng-asset-matcher.git && p
 ```
 
 Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claude`。脚本会校验文件、保留旧版备份，并输出需要在 Chrome / Edge 扩展管理页加载的目录；它不会自动上传素材或提交生成任务。
+
+## v0.3.20 · 修复画布自动匹配
+
+- 兼容新版画布的图片、视频、音频原生候选缩略图标记，修复菜单中存在素材却匹配不到的问题。
+- 匹配前等待画布富文本回写稳定，再定位引用光标，避免连续匹配时菜单意外关闭或插入中断。
+- 保留精确名称匹配、原文和原生标签校验；普通创作页保持原有触发流程。
+- 同步扩展、Agent 安装包版本和文件校验清单，并补充候选识别及异步回写回归测试。
 
 ## v0.3.19 新增：跟随网页深浅色
 
@@ -36,8 +43,8 @@ Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claud
 
 | 下载内容 | 用途 |
 | --- | --- |
-| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.19/jimeng-asset-matcher-v0.3.19.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
-| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.19/jimeng-asset-matcher-skill-v0.3.19.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
+| **[插件安装包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.20/jimeng-asset-matcher-v0.3.20.zip)** | 推荐下载。只包含运行程序、图标和许可证，解压即可加载。 |
+| [Skill 与源码包](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.20/jimeng-asset-matcher-skill-v0.3.20.zip) | 可由 Agent 自动安装的 Skill、安装脚本与完整扩展源码。 |
 | [两图入门素材（可选）](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.17/quick-start-v0.3.17.zip) | 两张演示图片及提示词，用来熟悉操作。 |
 | [50 项混合素材（可选）](https://github.com/yuanlai-233/jimeng-asset-matcher/releases/download/v0.3.17/test-materials-50-v0.3.17.zip) | 30 张图片、10 段视频、10 段音频及提示词，用来体验批量匹配。 |
 
@@ -51,7 +58,7 @@ Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claud
 4. 选择**直接包含 `manifest.json`** 的文件夹，不要选择 ZIP 文件或外层空目录。
 5. 回到即梦并刷新页面，点击视频提示词框。首次出现说明时，点击 **开始使用**。
 
-![安装位置与版本号：开启开发者模式，加载文件夹，确认版本为 0.3.19](docs/images/01-install.png)
+![安装示意（旧版截图）：当前更新后请确认版本为 0.3.20](docs/images/01-install.png)
 
 更新时，用新版覆盖原安装文件夹，点击扩展的 **重新加载**，再刷新即梦。刷新前先复制保存提示词。只启用一个版本；如果还装着旧油猴脚本，请先停用。安装后保留该文件夹，浏览器需要从这里读取程序。
 
@@ -189,3 +196,7 @@ Claude Code 用户把命令末尾的 `--platform codex` 改为 `--platform claud
 ![源来的赞赏码](docs/images/reward-qrcode.png)
 
 **所有代码都是AI 写的，本人不会代码，屎山代码勿喷**
+
+## 回归测试
+
+使用 Node.js 运行 `node tests/candidates-mixed-media.test.js` 和 `node tests/canvas-trigger-bridge.test.js`，分别检查混合候选识别、滚动定位以及画布异步回写保护。

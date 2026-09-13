@@ -57,7 +57,7 @@ python3 scripts/install.py --skills-dir "/path/to/project/.claude/skills"
 
 1. Chrome 地址栏输入 `chrome://extensions/`；Edge 输入 `edge://extensions/`。
 2. 开启开发者模式，点击加载已解压的扩展程序，选择输出的 `extension_dir`。
-3. 确认扩展名称“即梦素材一键匹配”、版本 `0.3.19` 且已启用。
+3. 确认扩展名称“即梦素材一键匹配”、版本 `0.3.20` 且已启用。
 4. 保存提示词后刷新即梦页面，进入视频创作并点击提示词框；首次说明点击“开始使用”。
 
 脚本输出 `files_installed` 表示文件部署完成，`manual_load_required` 表示尚未验证浏览器加载。若其他 AI 有本机 UI 操作工具，可继续完成加载与界面核对；不得只凭安装退出码宣称网页已可用。

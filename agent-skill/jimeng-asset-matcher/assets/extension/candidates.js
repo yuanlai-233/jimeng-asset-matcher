@@ -63,7 +63,13 @@
   function assetThumbnail(row) {
     // Audio uploads use an SVG inside the native option's cover container.
     // A generic SVG check would also admit commands and subject-management rows.
-    return row.querySelector('img, picture, video, audio, canvas, [class*="option-cover-container-"] svg');
+    // Modern canvas options can render video/audio (and pending image) covers
+    // as icons. Their typed native thumbnail is still a reference; otherwise
+    // one image row makes the mixed list silently discard all icon-only rows.
+    return row.querySelector('img, picture, video, audio, canvas, [class*="option-cover-container-"] svg, ' +
+      '[data-mention-option-thumbnail][data-kind="image"], ' +
+      '[data-mention-option-thumbnail][data-kind="video"], ' +
+      '[data-mention-option-thumbnail][data-kind="audio"]');
   }
 
   // Saved subjects share the same @ popup and thumbnail layout as uploaded

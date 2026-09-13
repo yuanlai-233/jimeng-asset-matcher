@@ -84,6 +84,7 @@
 // remain the only mechanism that constructs mention nodes.
 (function installEditorSelectionBridge() {
   const pinned = new WeakMap();
+  const settling = new WeakMap();
   document.addEventListener("jimeng-editor-selection-request", (event) => {
     const editor = event.target;
     if (!editor?.matches?.('.ProseMirror[contenteditable="true"]') ||
@@ -98,6 +99,18 @@
         editor.getBoundingClientRect().height < (canvasForm ? 1 : 36))) return result("hidden");
       const view = editor.editor?.view;
       if (!view || view.dom !== editor || view.isDestroyed) return result("unsupported");
+      if (request.mode === "begin-settle" || request.mode === "settle") {
+        if (!canvasForm) return result("unsupported");
+        const saved = settling.get(editor);
+        // Canvas can asynchronously replace its controlled document and reset
+        // selection after the preceding native chip was already visible. Wait
+        // for rich-document stability BEFORE pinning the next source caret.
+        if (request.mode === "begin-settle" || !saved || !saved.doc.eq(view.state.doc)) {
+          settling.set(editor, { doc: view.state.doc, since: Date.now() });
+          return result("settling");
+        }
+        return result(Date.now() - saved.since >= 300 ? "synced" : "settling");
+      }
       if (request.mode === "capture-trigger") {
         if (view.state.selection.from !== view.state.selection.to) return result("invalid-selection");
         const previous = pinned.get(editor);
