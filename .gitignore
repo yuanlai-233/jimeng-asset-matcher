@@ -1,11 +1,41 @@
+# OS / editors
 .DS_Store
 Thumbs.db
-*.pem
-*.key
+.vscode/
+.idea/
+.codex/
+.agents/
+
+# Secrets and local configuration
 .env
 .env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Dependencies and test output
 node_modules/
+coverage/
+.nyc_output/
+*.log
+npm-debug.log*
+
+# Build and release output
 dist/
+build/
+release/
+tmp/
 *.zip
 *.crx
-examples/
+
+# Internal handoff and local captures
+/HANDOFF.md
+/录屏*
+/codex-clipboard-*.png
+*.mov
+*.mp4
+*.webm
+
+# High-resolution generation source; runtime icons are tracked separately.
+/icons/mobius-master.png

@@ -256,9 +256,17 @@
 
   // Exact positions distinguish the intended explicit @ token from another
   // same-name occurrence after a failed first insertion attempt.
-  function findRangeAt(editor, token, start) {
-    return findAllRanges(editor, token)
-      .find((item) => item.position === start)?.range || null;
+  function findRangeAt(editor, token, start, map = textNodeMap(editor)) {
+    const end = start + token.length;
+    if (!token || !Number.isInteger(start) || start < 0 || map.text.slice(start, end) !== token) return null;
+    const touched = map.entries.filter((entry) => entry.end > start && entry.start < end);
+    const first = touched[0];
+    const last = touched[touched.length - 1];
+    if (!first || !last || start < first.start || end > last.end || touched.some((entry) => entry.mention)) return null;
+    const range = document.createRange();
+    range.setStart(first.node, start - first.start);
+    range.setEnd(last.node, end - last.start);
+    return range;
   }
 
   // Focus first, then resolve a fresh range and collapse it at the end of the
@@ -450,15 +458,15 @@
   // the first meaningful DOM unit after it, in the same Slate block, is an
   // exact same-name native mention. Spaces, punctuation and ordinary text are
   // meaningful; only Slate's zero-width caret leaves may be skipped.
-  function isMatchPaired(editor, match) {
+  function isMatchPaired(editor, match, snapshot = null) {
     const name = normalizeAssetName(match?.name);
     if (!editor || !name || !match?.token || !Number.isInteger(match.start)) {
       return false;
     }
-    const range = findRangeAt(editor, match.token, match.start);
+    const range = findRangeAt(editor, match.token, match.start, snapshot?.map);
     if (!range?.endContainer || !Number.isInteger(range.endOffset)) return false;
-    const events = linearEditorEvents(editor);
-    const endpoint = events.findIndex((event) =>
+    const events = snapshot?.events || linearEditorEvents(editor);
+    const endpoint = snapshot ? (snapshot.endpoints.get(range.endContainer) ?? -1) : events.findIndex((event) =>
       event.type === "text" && event.node === range.endContainer
     );
     if (endpoint < 0) return false;
@@ -478,14 +486,24 @@
     return false;
   }
 
+  // Reuse DOM maps only within one synchronous read. Never cache across a
+  // click/await: React can replace the document or change a native chip label.
+  function pairedCandidateMatches(editor, matches) {
+    if (!editor || !matches?.length) return [];
+    const events = linearEditorEvents(editor);
+    const snapshot = { map: textNodeMap(editor), events,
+      endpoints: new Map(events.map((event, index) => [event.node, index])) };
+    return matches.filter((match) => isMatchPaired(editor, match, snapshot));
+  }
+
   function countPairedCandidateMentions(editor, matches) {
     const names = Array.from(new Set(
       (matches || []).map((match) => normalizeAssetName(match?.name)).filter(Boolean)
     ));
     const counts = new Map(names.map((name) => [name, 0]));
-    for (const match of matches || []) {
+    for (const match of pairedCandidateMatches(editor, matches)) {
       const name = normalizeAssetName(match?.name);
-      if (name && isMatchPaired(editor, match)) {
+      if (name) {
         counts.set(name, (counts.get(name) || 0) + 1);
       }
     }
@@ -494,7 +512,8 @@
 
   function unpairedCandidateMatches(editor, candidateNames) {
     const matches = matchPromptToCandidates(plainText(editor), candidateNames || []);
-    return matches.filter((match) => !isMatchPaired(editor, match));
+    const paired = new Set(pairedCandidateMatches(editor, matches));
+    return matches.filter((match) => !paired.has(match));
   }
 
   // Native chips remain available when the upload catalogue is invalidated.
@@ -737,6 +756,7 @@
     deleteTextAt,
     findEditor,
     findRangeAt,
+    pairedCandidateMatches,
     highlightReferences,
     highlightRemaining,
     insertText,

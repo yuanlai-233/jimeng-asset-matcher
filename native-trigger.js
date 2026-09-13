@@ -343,12 +343,14 @@
 
   async function ensurePicker(editor, {
     beforeClick = null,
+    assertCurrent = () => {},
     requireFresh = false
   } = {}) {
     const outcome = (ok, reason) => {
       if (plugin.state) plugin.state.lastNativeTriggerResult = { ok, reason };
       return ok;
     };
+    assertCurrent();
     // Both modern Tiptap toolbars can retain the user's last typed @ query.
     // Own a separate one-character trigger before allowing any candidate click.
     const ownsTrigger = Boolean(plugin.canvas?.capturePicker &&
@@ -372,11 +374,13 @@
       editor.focus();
     }
     await plugin.sleep(0);
+    assertCurrent();
     if (plugin.canvas?.formFor(editor) && plugin.canvas.waitForEditorSettled &&
       !await plugin.canvas.waitForEditorSettled(editor)) {
       return outcome(false, "editor-not-settled");
     }
     let button = await resolveNativeButton(editor);
+    assertCurrent();
     if (!button) return outcome(false, "native-button-missing");
     if (button.getAttribute("aria-expanded") === "true") {
       return outcome(!requireFresh, "button-already-expanded");
@@ -394,6 +398,7 @@
     // microtask. Let that synchronization finish, then re-resolve the live
     // toolbar node because the same update may remount the paged toolbar.
     await plugin.sleep(0);
+    assertCurrent();
     const liveButton = findNativeButton(editor, { scopeRoot: buttonScope });
     if (!liveButton || buttonScope && !buttonScope.contains?.(liveButton)) {
       return outcome(false, "toolbar-changed");
@@ -404,12 +409,13 @@
     button.click();
     if (ownsTrigger) {
       await plugin.sleep(0);
+      assertCurrent();
       if (!plugin.canvas.acceptPicker(editor)) return outcome(false, "trigger-changed");
     }
     const opened = await plugin.waitFor(
       () => pickerIsOpen(editor) || button.getAttribute("aria-expanded") === "true",
       1200,
-      60
+      16
     );
     if (opened && buttonScope) trustedButtonScopeByEditor.set(editor, buttonScope);
     if (!opened && ownsTrigger) plugin.candidates.closePicker();

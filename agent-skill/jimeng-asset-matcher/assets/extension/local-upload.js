@@ -12,6 +12,7 @@
   const ERROR_ELEMENT_TEXT = /(?:上传失败|上傳失敗|文件过大|檔案過大|格式不支持|不支援.{0,6}格式|重新上传|重新上傳|upload failed|unsupported file|file too large)/i;
   const SUCCESS_TEXT = /(?:上传成功|上传完成|upload complete|upload succeeded)/gi;
   const CAPACITY_TEXT = /(?:最多(?:支持|支援)?(?:添加|上传|上傳)?\s*\d+\s*(?:个|张|個|張)?\s*(?:图片|圖像|圖片|影片|音訊|图像|素材|參考)|(?:图片|圖片)(?:数|數)?量.{0,12}(?:上限|限制)|maximum.{0,20}(?:images|references|materials))/i;
+  const MAX_UPLOAD_BATCH_FILES = 50;
 
   class LocalUploadError extends Error {
     constructor(code, message, details = null) {
@@ -33,7 +34,10 @@
 
   function normalizeFiles(files, options = {}) {
     const list = Array.from(files || []);
-    const maxFiles = Number.isFinite(options.maxFiles) ? options.maxFiles : 100;
+    const maxFiles = Math.min(
+      Number.isFinite(options.maxFiles) ? options.maxFiles : MAX_UPLOAD_BATCH_FILES,
+      MAX_UPLOAD_BATCH_FILES
+    );
     if (!list.length) fail("NO_FILES", "没有可上传的素材文件。");
     if (list.length > maxFiles) {
       fail("TOO_MANY_FILES", `一次最多上传 ${maxFiles} 项素材。`, { count: list.length });
@@ -811,6 +815,7 @@
       if (materials.some((item) => item.status === "uploading")) fail("CANVAS_UPLOAD_PENDING", "画布素材仍在上传，请等待完成后重试。");
       const compact = (name) => String(name).normalize("NFC").replace(/\s+/gu, "");
       const batches = [];
+      const newFiles = [];
       for (const file of normalized) {
         const stem = file.name.slice(0, -(media.extensionOf(file.name).length + 1));
         const existing = materials.filter((item) => compact(item.name) === compact(stem));
@@ -818,8 +823,12 @@
           fail("CANVAS_EXISTING_MATERIAL", `画布中已有同名素材：${stem}。请先点击“自动匹配”核对。`);
         }
         if (existing.length) batches.push({ files: [file], replaceId: existing[0].id });
-        else batches.push({ files: [file] });
+        else newFiles.push(file);
       }
+      // A fresh canvas upload can accept the complete new-material batch at
+      // once. Failed cards are intentionally kept as one-file replacements so
+      // their existing positions remain stable and cannot be duplicated.
+      if (newFiles.length) batches.push({ files: newFiles });
       let completed = 0;
       let first;
       let last;
@@ -881,6 +890,7 @@
     findUploadInput,
     inputScore,
     normalizeFiles,
+    MAX_UPLOAD_BATCH_FILES,
     rankUploadInputs,
     resolveModernRoot,
     imageLimitForEditor,

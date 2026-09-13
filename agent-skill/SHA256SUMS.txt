@@ -1,3 +1,3 @@
-ad73b8e1ebbc4b4e02bb67d6d7d860ae7c25067d34abc5818c055f01a5a1f8b8  jimeng-asset-matcher-skill-v0.3.22.zip
-f426e3ac4780cd972b80161e6e94da2e49802f70de2ffdf1c7cb7d4f6b0b69ff  jimeng-asset-matcher-skill-v0.3.22-flat.zip
-ad73b8e1ebbc4b4e02bb67d6d7d860ae7c25067d34abc5818c055f01a5a1f8b8  jimeng-asset-matcher-v0.3.22.skill
+4dc273bcd69338dfddc4ae84831dc40781f4ddcccdf4a1159a1881dc23238dc4  jimeng-asset-matcher-skill-v0.3.24.zip
+e03413b2b02426335c43860df44c3751f7d592c8f823e29d25cde594472d1ccd  jimeng-asset-matcher-skill-v0.3.24-flat.zip
+4dc273bcd69338dfddc4ae84831dc40781f4ddcccdf4a1159a1881dc23238dc4  jimeng-asset-matcher-v0.3.24.skill

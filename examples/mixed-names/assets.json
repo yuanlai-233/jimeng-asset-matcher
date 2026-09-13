@@ -1,0 +1,491 @@
+{
+  "package": "即梦跨机测试包",
+  "plugin_version": "0.3.17",
+  "created": "2026-09-11",
+  "asset_count": 50,
+  "counts": {
+    "image": 30,
+    "video": 10,
+    "audio": 10
+  },
+  "assets": [
+    {
+      "id": "I01",
+      "type": "image",
+      "name": "角色_01",
+      "normalized_name": "角色_01",
+      "path": "materials/01_图片_30张/01_基础与前缀/角色_01.png",
+      "bytes": 12027,
+      "sha256": "8c895ae4e080c839e180317954bb7814507f1aaf51106f65d9ebf4fc8ec70735"
+    },
+    {
+      "id": "I02",
+      "type": "image",
+      "name": "角色_010",
+      "normalized_name": "角色_010",
+      "path": "materials/01_图片_30张/01_基础与前缀/角色_010.png",
+      "bytes": 13893,
+      "sha256": "1ab0d03c372f9b34babb6912cd0e2d98898c2f862b04b3f0e886f165a7372e2d"
+    },
+    {
+      "id": "I03",
+      "type": "image",
+      "name": "角色_02",
+      "normalized_name": "角色_02",
+      "path": "materials/01_图片_30张/01_基础与前缀/角色_02.png",
+      "bytes": 14409,
+      "sha256": "8808235b3fed0e4a4239ecc9961a117a72844cb08a5ae90921da08eb57206255"
+    },
+    {
+      "id": "I04",
+      "type": "image",
+      "name": "场景_01",
+      "normalized_name": "场景_01",
+      "path": "materials/01_图片_30张/01_基础与前缀/场景_01.png",
+      "bytes": 12343,
+      "sha256": "5ccb3f86e9346d37770cf78998c03091425f1539a93026832208ab2d505d5511"
+    },
+    {
+      "id": "I05",
+      "type": "image",
+      "name": "场景_010",
+      "normalized_name": "场景_010",
+      "path": "materials/01_图片_30张/01_基础与前缀/场景_010.png",
+      "bytes": 13443,
+      "sha256": "ac9b1b08c5fe7d56b2a94574fb13eb4de9c24cf110c835d8d0a34d4b236fa711"
+    },
+    {
+      "id": "I06",
+      "type": "image",
+      "name": "道具_红杯",
+      "normalized_name": "道具_红杯",
+      "path": "materials/01_图片_30张/01_基础与前缀/道具_红杯.png",
+      "bytes": 14626,
+      "sha256": "b1a15aeed266c71e573e02fe2c9d0f00c43f08a1d85dcbcee6cf3e28ef65ad51"
+    },
+    {
+      "id": "I07",
+      "type": "image",
+      "name": "道具_红杯盖",
+      "normalized_name": "道具_红杯盖",
+      "path": "materials/01_图片_30张/01_基础与前缀/道具_红杯盖.png",
+      "bytes": 12580,
+      "sha256": "0f60df7af3c201fcd73dddecf21445ca1a9f5a00c30d6d88b59b877dc312e291"
+    },
+    {
+      "id": "I08",
+      "type": "image",
+      "name": "7",
+      "normalized_name": "7",
+      "path": "materials/01_图片_30张/01_基础与前缀/7.png",
+      "bytes": 15127,
+      "sha256": "c500f234abf6ef770abffa262b8b0804b667ef643ffb893f73b8254c186364d3"
+    },
+    {
+      "id": "I09",
+      "type": "image",
+      "name": "70",
+      "normalized_name": "70",
+      "path": "materials/01_图片_30张/01_基础与前缀/70.png",
+      "bytes": 15029,
+      "sha256": "64e76c28505130c7c56d603d59a1b13afb6cb87c3806bbf14203f14655b7f15a"
+    },
+    {
+      "id": "I10",
+      "type": "image",
+      "name": "700",
+      "normalized_name": "700",
+      "path": "materials/01_图片_30张/01_基础与前缀/700.png",
+      "bytes": 12082,
+      "sha256": "02de2f986bb4e1b358ee9d354bfd84ba1466b88f3db738266da2530724485857"
+    },
+    {
+      "id": "I11",
+      "type": "image",
+      "name": "角色 正面",
+      "normalized_name": "角色 正面",
+      "path": "materials/01_图片_30张/02_空格与英文/角色 正面.png",
+      "bytes": 8800,
+      "sha256": "076214d0dfffe10cba6fda2d883a65c1de430cdb0fdb330b2b32bac67d02326a"
+    },
+    {
+      "id": "I12",
+      "type": "image",
+      "name": "角色  侧面",
+      "normalized_name": "角色 侧面",
+      "path": "materials/01_图片_30张/02_空格与英文/角色  侧面.png",
+      "bytes": 11487,
+      "sha256": "6d8dc3466db77fdfac55a23c2c061e43b3f6b888ebab785b285fe777e8a66eac"
+    },
+    {
+      "id": "I13",
+      "type": "image",
+      "name": "scene morning",
+      "normalized_name": "scene morning",
+      "path": "materials/01_图片_30张/02_空格与英文/scene morning.png",
+      "bytes": 12099,
+      "sha256": "85568b0a6d65cb7d152bb038c4e52ecc5f4ed4eb82d4bb974e783d25f549449e"
+    },
+    {
+      "id": "I14",
+      "type": "image",
+      "name": "scene night",
+      "normalized_name": "scene night",
+      "path": "materials/01_图片_30张/02_空格与英文/scene night.png",
+      "bytes": 9813,
+      "sha256": "1b7cc504a4b2c92d7bc6135cbaf116e8472e85c54db0e48405fcddc49a4acac2"
+    },
+    {
+      "id": "I15",
+      "type": "image",
+      "name": "prop  backpack",
+      "normalized_name": "prop backpack",
+      "path": "materials/01_图片_30张/02_空格与英文/prop  backpack.png",
+      "bytes": 11191,
+      "sha256": "e05396c57581c3f48d5176eec61c007cba2f759d04938fbe40f61515d8ab603b"
+    },
+    {
+      "id": "I16",
+      "type": "image",
+      "name": "scene_A",
+      "normalized_name": "scene_A",
+      "path": "materials/01_图片_30张/02_空格与英文/scene_A.png",
+      "bytes": 12315,
+      "sha256": "b8569ca80a4f6665f985589484ccfa884b0f21acd224170cf2db8da659163a07"
+    },
+    {
+      "id": "I17",
+      "type": "image",
+      "name": "scene_A1",
+      "normalized_name": "scene_A1",
+      "path": "materials/01_图片_30张/02_空格与英文/scene_A1.png",
+      "bytes": 10029,
+      "sha256": "390cad9d469358cf8419ceab144d670b69729e18dbacb6098d25d28423bc9acf"
+    },
+    {
+      "id": "I18",
+      "type": "image",
+      "name": "角色（正面）",
+      "normalized_name": "角色（正面）",
+      "path": "materials/01_图片_30张/02_空格与英文/角色（正面）.png",
+      "bytes": 12753,
+      "sha256": "59df9686720d7430a28c79962984ecb013429cdeaf8e995fd6b3ba4ff45779e6"
+    },
+    {
+      "id": "I19",
+      "type": "image",
+      "name": "角色（侧面）",
+      "normalized_name": "角色（侧面）",
+      "path": "materials/01_图片_30张/02_空格与英文/角色（侧面）.png",
+      "bytes": 12651,
+      "sha256": "5c1cb7e9b28b105c8368334e1e865da2c864762064a3c8fda967d69dc7441772"
+    },
+    {
+      "id": "I20",
+      "type": "image",
+      "name": "角色(背面)",
+      "normalized_name": "角色(背面)",
+      "path": "materials/01_图片_30张/02_空格与英文/角色(背面).png",
+      "bytes": 14143,
+      "sha256": "402726a37da51d0a2bc1c8339bd77a66bfa3e9d362444b63433582b5f975665f"
+    },
+    {
+      "id": "I21",
+      "type": "image",
+      "name": "场景（雨后）",
+      "normalized_name": "场景（雨后）",
+      "path": "materials/01_图片_30张/03_括号与混合/场景（雨后）.png",
+      "bytes": 11544,
+      "sha256": "f2772d9596dcd21c7fc0e711ed902d49fb6793f7b491c6be9ef0c1417bb3d18b"
+    },
+    {
+      "id": "I22",
+      "type": "image",
+      "name": "道具（打开）",
+      "normalized_name": "道具（打开）",
+      "path": "materials/01_图片_30张/03_括号与混合/道具（打开）.png",
+      "bytes": 11134,
+      "sha256": "52750f53328fc663838b1f05f0a4a4b2cb6dc3d93907d78ceb94a569b1d4d14e"
+    },
+    {
+      "id": "I23",
+      "type": "image",
+      "name": "道具（关闭）",
+      "normalized_name": "道具（关闭）",
+      "path": "materials/01_图片_30张/03_括号与混合/道具（关闭）.png",
+      "bytes": 14132,
+      "sha256": "706393a99fa8b3de95e1565f0a7b8e0d41b4c3da8b1ef2e02f4fd49644860b66"
+    },
+    {
+      "id": "I24",
+      "type": "image",
+      "name": "IMG-024",
+      "normalized_name": "IMG-024",
+      "path": "materials/01_图片_30张/03_括号与混合/IMG-024.png",
+      "bytes": 11958,
+      "sha256": "90f462c722cee497cf27daaca75f6602c5fef99036e9bc53a7cbd7a7911f5e90"
+    },
+    {
+      "id": "I25",
+      "type": "image",
+      "name": "IMG-024B",
+      "normalized_name": "IMG-024B",
+      "path": "materials/01_图片_30张/03_括号与混合/IMG-024B.png",
+      "bytes": 13299,
+      "sha256": "60ae9598645bed635a10c91864acdcbed67fcfa3352abbfbc8102ea060d676dc"
+    },
+    {
+      "id": "I26",
+      "type": "image",
+      "name": "场景_屋顶_夕阳",
+      "normalized_name": "场景_屋顶_夕阳",
+      "path": "materials/01_图片_30张/03_括号与混合/场景_屋顶_夕阳.png",
+      "bytes": 14197,
+      "sha256": "3cc565e2de5251d3d0042b5fbd6c58460448af4d8a3b8e68c429aa3c5c8c5550"
+    },
+    {
+      "id": "I27",
+      "type": "image",
+      "name": "道具_蓝箱_v2",
+      "normalized_name": "道具_蓝箱_v2",
+      "path": "materials/01_图片_30张/03_括号与混合/道具_蓝箱_v2.png",
+      "bytes": 12061,
+      "sha256": "7048a2bab5bff923d5ba16411931e996ec03afe59dad76df138c2bae9b069006"
+    },
+    {
+      "id": "I28",
+      "type": "image",
+      "name": "道具_蓝箱_v20",
+      "normalized_name": "道具_蓝箱_v20",
+      "path": "materials/01_图片_30张/03_括号与混合/道具_蓝箱_v20.png",
+      "bytes": 14678,
+      "sha256": "0fa96c4f713de47b89dd7c7cab067a24f5eb9c3c5e5b588f17330abe62d3a1ad"
+    },
+    {
+      "id": "I29",
+      "type": "image",
+      "name": "中英Mixed_29",
+      "normalized_name": "中英Mixed_29",
+      "path": "materials/01_图片_30张/03_括号与混合/中英Mixed_29.png",
+      "bytes": 14514,
+      "sha256": "dcd72d62e0c458a58756600d65c811135ce493e751ad54ca37fb0f04405f43b4"
+    },
+    {
+      "id": "I30",
+      "type": "image",
+      "name": "终点_测试图_30",
+      "normalized_name": "终点_测试图_30",
+      "path": "materials/01_图片_30张/03_括号与混合/终点_测试图_30.png",
+      "bytes": 14708,
+      "sha256": "14c82e69afe4f9b0e66c17daa1bcfdde669ea85fbec45541b77e6ec35a62157a"
+    },
+    {
+      "id": "V01",
+      "type": "video",
+      "name": "视频_01",
+      "normalized_name": "视频_01",
+      "path": "materials/02_视频_10段/视频_01.mp4",
+      "bytes": 48603,
+      "sha256": "57df6d50c6bb9b9dd18ede7fadd4f8c774a1a7552f362065e2a1df3a1e605dea"
+    },
+    {
+      "id": "V02",
+      "type": "video",
+      "name": "视频_010",
+      "normalized_name": "视频_010",
+      "path": "materials/02_视频_10段/视频_010.mp4",
+      "bytes": 49591,
+      "sha256": "2d702faaa224c074c7f76e52f17ebdcca2b5a56e69668d899927313f3d13530d"
+    },
+    {
+      "id": "V03",
+      "type": "video",
+      "name": "镜头 跟随",
+      "normalized_name": "镜头 跟随",
+      "path": "materials/02_视频_10段/镜头 跟随.mp4",
+      "bytes": 48999,
+      "sha256": "f120550cfe663e1221b6bba9939b4e966034a44e38872f68f268a2d65b7bbfa1"
+    },
+    {
+      "id": "V04",
+      "type": "video",
+      "name": "camera push",
+      "normalized_name": "camera push",
+      "path": "materials/02_视频_10段/camera push.mp4",
+      "bytes": 48301,
+      "sha256": "407a179272e031632ce111f90457843c894c51296bc7fc9e13c6b50af8cb5c2a"
+    },
+    {
+      "id": "V05",
+      "type": "video",
+      "name": "转场（打开）",
+      "normalized_name": "转场（打开）",
+      "path": "materials/02_视频_10段/转场（打开）.mp4",
+      "bytes": 51939,
+      "sha256": "19f53a0aed2e41063ff39dfbdc3dc98ed6777665f31c8cabe2d3770a8df0d6e8"
+    },
+    {
+      "id": "V06",
+      "type": "video",
+      "name": "转场（关闭）",
+      "normalized_name": "转场（关闭）",
+      "path": "materials/02_视频_10段/转场（关闭）.mp4",
+      "bytes": 50373,
+      "sha256": "a0114c2e66f0f6cd9c8d03cf3e9c1db438813890a0bb883bff578db070b68f00"
+    },
+    {
+      "id": "V07",
+      "type": "video",
+      "name": "clip_07",
+      "normalized_name": "clip_07",
+      "path": "materials/02_视频_10段/clip_07.mp4",
+      "bytes": 46388,
+      "sha256": "3150c7e94d284807393af5b0e9852b5b09de3aff75950eeda0b5974c06a101d1"
+    },
+    {
+      "id": "V08",
+      "type": "video",
+      "name": "clip_070",
+      "normalized_name": "clip_070",
+      "path": "materials/02_视频_10段/clip_070.mp4",
+      "bytes": 50773,
+      "sha256": "9b613841af1493d81636d914057f26238dffbe553652335cb67d495535de7421"
+    },
+    {
+      "id": "V09",
+      "type": "video",
+      "name": "混合Video_09",
+      "normalized_name": "混合Video_09",
+      "path": "materials/02_视频_10段/混合Video_09.mp4",
+      "bytes": 51298,
+      "sha256": "93a5d27370ea3bfc8ee6e4b966004d5d8587163a066ee2b810b6930568b720ab"
+    },
+    {
+      "id": "V10",
+      "type": "video",
+      "name": "结尾_视频_10",
+      "normalized_name": "结尾_视频_10",
+      "path": "materials/02_视频_10段/结尾_视频_10.mp4",
+      "bytes": 48259,
+      "sha256": "02b25edd9f6b595ae2f07f666bda294f1f26db24353a10685f6b47c47dd61ae8"
+    },
+    {
+      "id": "A01",
+      "type": "audio",
+      "name": "音频_01",
+      "normalized_name": "音频_01",
+      "path": "materials/03_音频_10段/音频_01.wav",
+      "bytes": 67244,
+      "sha256": "c270ebb1406494db075c76a897b10801e5a88a54d99973f7ccbac0a0adf87572"
+    },
+    {
+      "id": "A02",
+      "type": "audio",
+      "name": "音频_010",
+      "normalized_name": "音频_010",
+      "path": "materials/03_音频_10段/音频_010.wav",
+      "bytes": 67244,
+      "sha256": "09df6da89bd67d083dc4402c1ecdae7d0498801cc4cbd1c5feeeb0308f9be263"
+    },
+    {
+      "id": "A03",
+      "type": "audio",
+      "name": "声音 脉冲",
+      "normalized_name": "声音 脉冲",
+      "path": "materials/03_音频_10段/声音 脉冲.wav",
+      "bytes": 67244,
+      "sha256": "6fdc5adb3962eaa5d500a999eea1e40212f00d923425213af6a3fdf8a3fd6567"
+    },
+    {
+      "id": "A04",
+      "type": "audio",
+      "name": "sound pulse",
+      "normalized_name": "sound pulse",
+      "path": "materials/03_音频_10段/sound pulse.wav",
+      "bytes": 67244,
+      "sha256": "96c789320764141f4c43af19db1580120779ab7e82af01b8d9966ffa444d060a"
+    },
+    {
+      "id": "A05",
+      "type": "audio",
+      "name": "音效（上升）",
+      "normalized_name": "音效（上升）",
+      "path": "materials/03_音频_10段/音效（上升）.wav",
+      "bytes": 67244,
+      "sha256": "809bb09ad1e5353d59fd8a1affaa0ee141bece00888c2d21e5a5aa3aa9d9f319"
+    },
+    {
+      "id": "A06",
+      "type": "audio",
+      "name": "音效（下降）",
+      "normalized_name": "音效（下降）",
+      "path": "materials/03_音频_10段/音效（下降）.wav",
+      "bytes": 67244,
+      "sha256": "3648d3837ef5d6ddf43da070b1d2cd6ae0fde5742c2b2ceb75e16911b6db21d3"
+    },
+    {
+      "id": "A07",
+      "type": "audio",
+      "name": "audio_07",
+      "normalized_name": "audio_07",
+      "path": "materials/03_音频_10段/audio_07.wav",
+      "bytes": 67244,
+      "sha256": "37b1a3e8feea1f446750b50314e817c2f2a16bf63096c5d78037f70971c0d223"
+    },
+    {
+      "id": "A08",
+      "type": "audio",
+      "name": "audio_070",
+      "normalized_name": "audio_070",
+      "path": "materials/03_音频_10段/audio_070.wav",
+      "bytes": 67244,
+      "sha256": "5cb637785e8a8ef6f82544e478cdd9b90664f22cbad4e8a18bf5fd4c82d0b143"
+    },
+    {
+      "id": "A09",
+      "type": "audio",
+      "name": "混合Audio_09",
+      "normalized_name": "混合Audio_09",
+      "path": "materials/03_音频_10段/混合Audio_09.wav",
+      "bytes": 67244,
+      "sha256": "7d04d5409b83a069900c9324cbbe5b7714d87ee53449d74aa787437a89ee25ea"
+    },
+    {
+      "id": "A10",
+      "type": "audio",
+      "name": "结尾_音频_10",
+      "normalized_name": "结尾_音频_10",
+      "path": "materials/03_音频_10段/结尾_音频_10.wav",
+      "bytes": 67244,
+      "sha256": "bf5b6d70bf39e1b7193bf1f0c28444a50e7b7f520c64476ef5925dde4f6ba87b"
+    }
+  ],
+  "prompt_cases": [
+    {
+      "path": "prompt-50.txt",
+      "expected_matches": 50,
+      "expected_unique_assets": 50,
+      "references_per_asset": 1,
+      "missing": [],
+      "expect_format_error": false
+    },
+    {
+      "path": "prompt-100.txt",
+      "expected_matches": 100,
+      "expected_unique_assets": 50,
+      "references_per_asset": 2,
+      "missing": [],
+      "expect_format_error": false
+    },
+    {
+      "path": "prompt-150.txt",
+      "expected_matches": 150,
+      "expected_unique_assets": 50,
+      "references_per_asset": 3,
+      "missing": [],
+      "expect_format_error": false
+    }
+  ],
+  "source_note": "复用本项目已制作的合成编号卡片、卡片动画和低音量测试音，重新命名并编排测试用例。文件名中的角色、道具等词用于测试命名规则，不表示图片是对应的实物照片。",
+  "validation_scope": "v0.3.17：本机 50/100/150 处提示词名称与数量校验通过；普通页 Seedance 2.5 全能参考已完成 50 项混合自动上传和单次匹配。100/150 处提示词未在本版本逐一完成网页实测。"
+}

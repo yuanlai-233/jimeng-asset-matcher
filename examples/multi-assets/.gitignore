@@ -1,0 +1,5 @@
+# Synthetic public test media are intentionally included in this example.
+!videos/*.mp4
+!audio/*.wav
+!boundary/*.mp4
+!boundary/*.wav

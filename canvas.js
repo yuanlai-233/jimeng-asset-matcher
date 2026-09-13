@@ -111,6 +111,7 @@
   function cleanupPicker(editor) {
     const owner = activePickerEditor || editor;
     if (!owner || !pickerTexts.has(owner)) return;
+    plugin.editor.nativeSelectionAction(owner, "cleanup-inserted-trigger");
     const restored = plugin.editor.nativeSelectionAction(owner, "cleanup-trigger");
     pickerTexts.delete(owner);
     activePickerEditor = null;

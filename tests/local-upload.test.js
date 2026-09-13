@@ -227,6 +227,10 @@ async function testRejectsUnsupportedOrUnsafeBatches() {
     }),
     (error) => error.code === "UPLOAD_INPUT_NOT_FOUND"
   );
+  assert.throws(
+    () => adapter.normalizeFiles(Array.from({ length: 51 }, (_, index) => image(`超过上限${index}.png`))),
+    (error) => error.code === "TOO_MANY_FILES" && /50/.test(error.message)
+  );
   console.log("✓ rejects unsupported files and refuses a multi-file batch on a single-file input");
 }
 
@@ -827,16 +831,23 @@ async function testCanvasSequentialRecoveryBatches() {
     };
     return input;
   } };
-  const files = [image("retry.png"), ...Array.from({ length: 7 }, (_, i) => image(`new${i}.png`))];
+  const files = [image("retry.png"), ...Array.from({ length: 49 }, (_, i) => image(`new${i}.png`))];
   const result = await adapter.uploadFiles(files, { contextRoot: root, document: doc, disableMutationObserver: true,
     now: () => clock, interval: 100, stableMs: 100, sleep: async ms => { clock += ms; ready += pending; pending = 0; },
     snapshot: () => state({ canvasMaterials: ready, uploadBusyCount: pending }),
     onFilesDispatched: event => notices.push(event.filenames) });
-  assert.equal(result.count, 8);
-  assert.deepEqual(batches.map(batch => batch.names.length), [1, 1, 1, 1, 1, 1, 1, 1]);
+  assert.equal(result.count, 50);
+  assert.deepEqual(batches.map(batch => batch.names.length), [1, 49]);
   assert.equal(batches[0].replace, "bad");
   assert.equal(batches[1].replace, undefined);
   assert.deepEqual(notices.flat(), files.map(file => file.name));
+  const fiftyNew = Array.from({ length: 50 }, (_, index) => image(`batch-${index}.png`));
+  const batchStart = batches.length;
+  const fiftyResult = await adapter.uploadFiles(fiftyNew, { contextRoot: root, document: doc, disableMutationObserver: true,
+    now: () => clock, interval: 100, stableMs: 100, sleep: async ms => { clock += ms; ready += pending; pending = 0; },
+    snapshot: () => state({ canvasMaterials: ready, uploadBusyCount: pending }) });
+  assert.equal(fiftyResult.count, 50);
+  assert.deepEqual(batches.slice(batchStart).map(batch => batch.names.length), [50]);
   native = [{ id: "ready", name: "retry", status: "ready" }];
   await assert.rejects(() => adapter.uploadFiles([files[0]], { contextRoot: root }), error => error.code === "CANVAS_EXISTING_MATERIAL");
   const count = batches.length;
@@ -847,7 +858,7 @@ async function testCanvasSequentialRecoveryBatches() {
     snapshot: () => state({ canvasMaterials: ready, uploadBusyCount: pending }) }), error => error.code === "UPLOAD_NOT_CONFIRMED");
   assert.equal(batches.length, count + 1, "a failed batch must prevent later files from being dispatched");
   plugin.canvas = oldCanvas;
-  console.log("✓ canvas replaces failed cards singly, uploads new files one at a time, waits between batches and stops on failure");
+  console.log("✓ canvas replaces failed cards singly, uploads all new files in one batch, waits between batches and stops on failure");
 }
 
 (async () => {

@@ -234,8 +234,16 @@ globalThis.JimengLocalDirectory = {
 };
 
 const rootAttributes = new Map();
+const pageListeners = new Map();
+function listen(type, callback) {
+  if (!pageListeners.has(type)) pageListeners.set(type, []);
+  pageListeners.get(type).push(callback);
+}
+function fire(type, event = {}) {
+  for (const callback of pageListeners.get(type) || []) callback(event);
+}
 globalThis.document = {
-  addEventListener: () => {},
+  addEventListener: listen,
   contains: (element) => element !== editor || editorConnected,
   documentElement: {
     hasAttribute: (name) => rootAttributes.has(name),
@@ -245,7 +253,7 @@ globalThis.document = {
     id === plugin.constants.buttonId ? matchButton : null
   )
 };
-globalThis.window = { addEventListener: () => {} };
+globalThis.window = { addEventListener: listen };
 globalThis.visualViewport = { addEventListener: () => {} };
 globalThis.Node = { ELEMENT_NODE: 1 };
 globalThis.MutationObserver = class MutationObserver {
@@ -1061,6 +1069,54 @@ async function testTaskSwitchDuringCatalogueScanStopsBeforeInsertion() {
   assert.equal(insertCalls, 0, "task switching during discovery must stop before prompt mutation");
 }
 
+async function testInterruptedMatchingResumesWithoutBareTrigger() {
+  const originalInsert = plugin.candidates.insertMention;
+  const originalCanvas = plugin.canvas;
+  try {
+    for (const eventType of ["pointerdown", "visibilitychange", "blur", "pagehide", "throw"]) {
+      resetScenario();
+      const source = prompt = "人物 @素材甲，场景 @素材乙。";
+      candidateNames = ["素材甲", "素材乙"];
+      let ownsTrigger = false;
+      plugin.canvas = { cleanupPicker() {
+        if (ownsTrigger && prompt === source + "@") prompt = source;
+        ownsTrigger = false;
+      } };
+      let attempts = 0;
+      plugin.candidates.insertMention = async (target, match, options) => {
+        attempts += 1;
+        if (attempts === 1) return originalInsert(target, match, options);
+        prompt += "@";
+        ownsTrigger = true;
+        fire("pointerdown", { isTrusted: false });
+        assert.equal(ownsTrigger, true, "native synthetic clicks do not cancel matching");
+        if (eventType === "throw") throw new Error("menu interrupted");
+        if (eventType === "visibilitychange") document.visibilityState = "hidden";
+        fire(eventType, { isTrusted: true });
+        assert.equal(prompt, source, "clean synchronously before navigation can detach the old editor");
+        document.visibilityState = "visible";
+        options.assertEditorCurrent(target); // remains cancelled even after returning
+        throw new Error("cancel guard did not stop the next native click");
+      };
+      await assert.rejects(() => runMatchingDirect(matchButton), (error) =>
+        eventType === "throw" ? error.message === "menu interrupted" : error.code === "EDITOR_CHANGED_DURING_MATCHING");
+      assert.equal(prompt, source, "all exits remove only the owned trigger");
+      assert.equal(plugin.state.matching, false);
+      assert.equal(matchButton.disabled, false);
+      assert.equal(insertCalls, 1, "the already committed pair is kept");
+      plugin.candidates.insertMention = originalInsert;
+      await runMatchingDirect(matchButton);
+      assert.equal(insertCalls, 2, "resume fills only the missing pair, with no duplicate");
+      assert.equal(prompt, source);
+    }
+  } finally {
+    plugin.candidates.insertMention = originalInsert;
+    plugin.canvas = originalCanvas;
+    delete document.visibilityState;
+  }
+  console.log("✓ trusted navigation, hidden tabs, blur, pagehide and exceptions clean the owned @; a second run preserves and skips completed pairs");
+}
+
 async function testPreDispatchFailureDoesNotLockRetry() {
   resetScenario();
   selectedDirectory = directory("素材库", [file("入口恢复.png")]);
@@ -1362,6 +1418,7 @@ async function testMixedUploadLimitsAndLedger() {
 }
 
 (async () => {
+  await testInterruptedMatchingResumesWithoutBareTrigger();
   await testCanvasFailedUploadRecovery();
   await testMixedUploadLimitsAndLedger();
   await testCanvasNodeLedgerAcrossRemount();

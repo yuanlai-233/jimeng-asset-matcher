@@ -73,6 +73,21 @@ doc = new Doc("@错误改写");
 selection = new Selection(1);
 assert.equal(request("accept-trigger"), "changed", "more than a single insertion cannot be accepted");
 console.log("✓ canvas native @ cleanup restores only the exact pre-click document and never overwrites later edits");
+for (const changed of [false, true]) {
+  doc = new Doc("before @sample.");
+  selection = new Selection(doc.text.length);
+  const source = doc.text;
+  assert.equal(request("capture-trigger"), "synced");
+  doc = new Doc(source + "@" + (changed ? "用户输入" : ""));
+  selection = new Selection(0); // navigation changed focus before accept
+  editor.checkVisibility = () => false;
+  assert.equal(request("accept-trigger"), "hidden");
+  assert.equal(request("cleanup-trigger"), changed ? "unchanged" : "synced");
+  assert.equal(doc.text, changed ? source + "@用户输入" : source);
+  assert.equal(request("cleanup-trigger"), "unchanged", "cleanup is idempotent");
+  editor.checkVisibility = () => true;
+}
+console.log("✓ switching away between native click and accept removes only the owned @, even after the caret moves");
 for (const token of ["", "@QA_video_01", "@QA name (green)", "@测试_04", "@🧪素材"]) {
   doc = new Doc(`before ${token} after`);
   selection = new Selection(7 + token.length);

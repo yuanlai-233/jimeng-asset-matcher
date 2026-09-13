@@ -1,0 +1,19 @@
+{
+  "name": "jimeng-dreamina-asset-matcher",
+  "version": "0.3.24",
+  "private": true,
+  "license": "MIT",
+  "description": "Upload exact local image, video and audio references, then append native mentions after preserved prompt text.",
+  "scripts": {
+    "audit:privacy": "node scripts/privacy-audit.js",
+    "test:compat": "node tests/upload-bridge.test.js && node tests/editor-selection-bridge.test.js && node tests/ordinary-trigger-bridge.test.js",
+    "test:canvas": "node tests/canvas-adapter.test.js && node tests/canvas-trigger-bridge.test.js && node tests/canvas-editor-zoom.test.js && node tests/canvas-upload-bridge.test.js",
+    "build:release": "node scripts/build-release.js",
+    "test": "node tests/theme.test.js && node tests/bgm-control.test.js && node tests/bgm-bridge.test.js && node tests/media-files.test.js && node tests/manifest.test.js && node tests/onboarding.test.js && node tests/ui-onboarding-interaction.test.js && node tests/ui-toast.test.js && node tests/matcher.test.js && node tests/local-assets.test.js && node tests/local-directory.test.js && node tests/local-workflow.test.js && node tests/local-upload.test.js && node tests/content-local-upload.test.js && node tests/candidates.test.js && node tests/candidates-virtual-scroll.test.js && node tests/candidates-latency.test.js && node tests/candidates-popup-lifecycle.test.js && node tests/candidates-upload-count.test.js && node tests/candidates-recovery.test.js && node tests/content-candidate-cache.test.js && node tests/content-incomplete-catalog.test.js && node tests/content-uncertain-stop.test.js && node tests/content-late-pair-reconcile.test.js && node tests/content-focus-state.test.js && node tests/editor-counts.test.js && node tests/editor-mention-pairing.test.js && node tests/editor-caret-boundary.test.js && node tests/editor-insert-focus-regression.test.js && node tests/native-trigger.test.js && node tests/native-trigger-infinite-canvas.test.js && node tests/ui-state.test.js && node tests/candidates-mixed-media.test.js",
+    "check": "node --check theme.js && node --check bgm.js && node --check bgm-bridge.js && node --check media-files.js && node --check canvas-upload-bridge.js && node --check canvas.js && node --check upload-bridge.js && node --check matcher.js && node --check runtime.js && node --check onboarding.js && node --check local-assets.js && node --check local-directory.js && node --check local-workflow.js && node --check local-upload.js && node --check editor.js && node --check candidates.js && node --check native-trigger.js && node --check ui.js && node --check content.js && node --check scripts/privacy-audit.js && node --check scripts/build-release.js"
+  },
+  "devDependencies": {
+    "prosemirror-model": "^1.25.11",
+    "prosemirror-state": "^1.4.4"
+  }
+}

@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run test:compat
+      - run: npm run test:canvas
+      - run: npm run audit:privacy
+      - name: Reject local paths and private artifacts
+        run: |
+          pattern="/""Users/|/""var/folders/|Temporary""Items|BEGIN (RSA |EC |OPENSSH )?PRIVATE"" KEY"
+          if git grep -nE "$pattern"; then
+            echo 'Potential local path or secret found in publishable runtime files.'
+            exit 1
+          fi

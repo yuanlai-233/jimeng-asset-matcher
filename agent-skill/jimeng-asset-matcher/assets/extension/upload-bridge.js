@@ -8,6 +8,7 @@
   const resultEvent = "jimeng-local-picker-result";
   let active = false;
   const media = globalThis.JimengMediaFiles;
+  const MAX_UPLOAD_BATCH_FILES = 50;
 
   document.addEventListener(requestEvent, (event) => {
     const input = event.target;
@@ -29,7 +30,7 @@
     const targets = Array.from(root.querySelectorAll('[class*="reference-upload-"]'))
       .filter(visible);
     const files = Array.from(input.files || []);
-    if (targets.length !== 1 || !files.length || files.length > 100 ||
+    if (targets.length !== 1 || !files.length || files.length > MAX_UPLOAD_BATCH_FILES ||
       files.some((file) => !media.kindOf(file))) return report("invalid-target");
 
     active = true;
@@ -94,7 +95,7 @@
     const result = (value) => editor.setAttribute("data-jimeng-selection-result", value);
     try {
       const request = JSON.parse(editor.getAttribute("data-jimeng-selection-request") || "{}");
-      const ownedCleanup = request.mode === "cleanup-trigger";
+      const ownedCleanup = request.mode === "cleanup-trigger" || request.mode === "cleanup-inserted-trigger";
       if (!ownedCleanup && (!editor.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) ||
         editor.getBoundingClientRect().height < (canvasForm ? 1 : 36))) return result("hidden");
       const view = editor.editor?.view;
@@ -153,6 +154,16 @@
       if (request.mode === "cleanup-trigger") {
         const saved = pinned.get(editor);
         pinned.delete(editor);
+        // Navigation can hide the editor between the toolbar click and
+        // accept-trigger. Prove ownership from the pre-click rich document,
+        // without requiring the old caret or a visible editor.
+        if (saved?.beforeTrigger && view.state.doc.textBetween(saved.pos, saved.pos + 1) === "@") {
+          const tr = view.state.tr.delete(saved.pos, saved.pos + 1);
+          if (tr.doc.eq(saved.doc)) {
+            view.dispatch(tr);
+            return result("synced");
+          }
+        }
         // Canvas collaboration may replace the document with an equal copy.
         // Full rich-document equality still rejects user edits and chip commits.
         if (!saved?.ownsTrigger || !saved.doc.eq(view.state.doc)) return result("unchanged");

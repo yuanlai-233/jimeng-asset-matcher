@@ -20,6 +20,15 @@
   let promptRebaseDropsPlain = false;
   let promptResetEditor = null;
   let promptResetTimer = null;
+  let matchingInterrupted = false;
+
+  function interruptMatching() {
+    if (!plugin.state.matching) return;
+    matchingInterrupted = true;
+    // Run before a trusted navigation click unmounts the old editor. Never
+    // close a popup in the newly selected page or delete an unowned bare @.
+    plugin.canvas?.cleanupPicker?.();
+  }
 
   function scheduleTaskStateRebase(editor, { dropPlainTargets = false } = {}) {
     if (!editor || plugin.state.matching) return;
@@ -57,7 +66,11 @@
     expected,
     { retryIncomplete = true } = {}
   ) {
-    const opened = await plugin.nativeTrigger.ensurePicker(editor);
+    const assertCurrent = () => {
+      if (plugin.state.matching) assertMatchingEditorCurrent(editor);
+    };
+    const opened = await plugin.nativeTrigger.ensurePicker(editor, { assertCurrent });
+    assertCurrent();
     if (!opened) {
       plugin.candidates.closePicker();
       throw new Error(
@@ -65,6 +78,7 @@
       );
     }
     let rows = await plugin.candidates.discover(editor);
+    assertCurrent();
     let progress = discoveryProgress(rows, expected);
     if (progress.complete) {
       plugin.candidates.closePicker();
@@ -84,12 +98,15 @@
     );
     plugin.candidates.closePicker();
     await plugin.sleep(220);
-    const reopened = await plugin.nativeTrigger.ensurePicker(editor);
+    assertCurrent();
+    const reopened = await plugin.nativeTrigger.ensurePicker(editor, { assertCurrent });
+    assertCurrent();
     if (!reopened) {
       plugin.candidates.closePicker();
       throw new Error("原生素材菜单没有重新打开，已停止读取以保护提示词。");
     }
     rows = await plugin.candidates.discover(editor);
+    assertCurrent();
     progress = discoveryProgress(rows, expected);
     if (!progress.complete && progress.expected) {
       plugin.candidates.closePicker();
@@ -249,6 +266,11 @@
   }
 
   function assertMatchingEditorCurrent(editor) {
+    if (matchingInterrupted || document.visibilityState === "hidden") {
+      const error = new Error("已暂停匹配并清理临时 @；回到原任务后点“自动匹配”可继续，已匹配标签会保留。");
+      error.code = "EDITOR_CHANGED_DURING_MATCHING";
+      throw error;
+    }
     assertEditorCurrent(
       editor,
       "EDITOR_CHANGED_DURING_MATCHING",
@@ -630,14 +652,14 @@
 
   function candidateMatches(editor, prompt, candidateNames, targetMentionCounts) {
     const discovered = matcher.matchPromptToCandidates(prompt, candidateNames);
-    const pairedSlots = new Set(discovered
-      .filter((match) => plugin.editor.isMatchPaired(editor, match))
+    const paired = plugin.editor.pairedCandidateMatches
+      ? plugin.editor.pairedCandidateMatches(editor, discovered)
+      : discovered.filter((match) => plugin.editor.isMatchPaired(editor, match));
+    const pairedSlots = new Set(paired
       .map((match) => matcher.matchSlotKey(match))
       .filter(Boolean));
-    const currentCounts = plugin.editor.countPairedCandidateMentions(
-      editor,
-      discovered
-    );
+    const currentCounts = new Map();
+    for (const match of paired) currentCounts.set(match.name, (currentCounts.get(match.name) || 0) + 1);
     const seededTargets = new Map(targetMentionCounts);
     const plan = matcher.planMatchesToMentionTargets(
       discovered,
@@ -789,6 +811,7 @@
     const verifiedBeforeRun = plugin.state.matchStatusVerified;
     const verifiedEditorBeforeRun = plugin.state.matchStatusEditor;
     plugin.state.matching = true;
+    matchingInterrupted = false;
     plugin.ui.setMatchControlsBusy?.(true);
     plugin.ui.invalidateMatchStatus();
     button.disabled = true;
@@ -1097,6 +1120,7 @@
         plugin.ui.showUnexpectedMaterialsReview(unexpectedMaterials);
       }
     } finally {
+      plugin.canvas?.cleanupPicker?.();
       plugin.state.matching = false;
       button.disabled = false;
       button.textContent = "自动匹配";
@@ -1264,6 +1288,14 @@
   plugin.ui.installAssetChangeGuard();
   plugin.ui.installSendGuard();
   plugin.ui.updateMatchStatus();
+  document.addEventListener("pointerdown", (event) => {
+    if (event.isTrusted) interruptMatching();
+  }, true);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") interruptMatching();
+  });
+  window.addEventListener("blur", interruptMatching);
+  window.addEventListener("pagehide", interruptMatching);
   document.addEventListener("beforeinput", (event) => {
     if (plugin.state.matching || !event.isTrusted) return;
     const trackedEditor = plugin.state.matchStatusEditor;

@@ -145,6 +145,13 @@ function fixture(options = {}) {
     f.assertRestored();
   }
   console.log("✓ canvas hands exact files to one native upload action and restores click/showPicker/open hooks");
+  const tooMany = fixture({ files: Array.from({ length: 51 }, (_, index) => ({
+    name: `material-${index}.png`, type: "image/png", size: 12
+  })) });
+  await tooMany.start();
+  assert.equal(tooMany.status(), "invalid-target");
+  tooMany.assertRestored();
+  console.log("✓ canvas rejects batches larger than the 50-file native upload limit");
   for (const [options, expected] of [
     [{ hidden: true }, "invalid-target"], [{ disabled: true }, "invalid-target"],
     [{ twoEditors: true }, "invalid-target"], [{ files: [] }, "invalid-target"],

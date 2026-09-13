@@ -3,6 +3,7 @@
   let active = false;
   const media = globalThis.JimengMediaFiles;
   const formSelector = 'form[data-testid="video-generation-form"]';
+  const MAX_UPLOAD_BATCH_FILES = 50;
   const visible = (element) => Boolean(element?.isConnected &&
     element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) &&
     element.getBoundingClientRect().height > 0);
@@ -60,7 +61,7 @@
     if (active || !form?.matches(formSelector) || !form.getAttribute("data-target-id") ||
       editors.length !== 1 || !visible(editors[0]) || buttons.length !== 1 ||
       buttons[0].disabled || buttons[0].getAttribute("aria-disabled") === "true" ||
-      !files.length || files.length > 100 || files.some((file) => !file.size || !media.kindOf(file))) {
+      !files.length || files.length > MAX_UPLOAD_BATCH_FILES || files.some((file) => !file.size || !media.kindOf(file))) {
       return report("invalid-target");
     }
     const editor = editors[0];

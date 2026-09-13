@@ -1021,7 +1021,7 @@
     try {
       assertCandidateOperation(options, editor);
     } catch (error) {
-      closePicker();
+      plugin.canvas?.cleanupPicker?.(editor);
       throw error;
     }
   }
@@ -1096,6 +1096,7 @@
     }
     liveEditor = currentEditor(liveEditor);
     const pickerOpened = await plugin.nativeTrigger?.ensurePicker?.(liveEditor, {
+      assertCurrent: () => assertCandidateOperationOrClose(options, liveEditor),
       beforeClick: async () => {
         assertCandidateOperation(options, liveEditor);
         // The site's queued controlled-value update can briefly restore the
@@ -1125,7 +1126,7 @@
     const pickerSession = await plugin.waitFor(
       () => triggeredPickerSession(boundary),
       1400,
-      40
+      16
     );
     assertCandidateOperationOrClose(options, liveEditor);
     if (!pickerSession) {
@@ -1177,11 +1178,12 @@
     (nativeContent || liveRow.element).click();
     let outcome = await plugin.waitFor(
       () => {
+        assertCandidateOperationOrClose(options, liveEditor);
         plugin.canvas?.cleanupInsertedTrigger?.(liveEditor);
         return candidateOperationOutcome(liveEditor, match);
       },
       4500,
-      50
+      16
     );
     assertCandidateOperation(options, liveEditor);
     if (outcome?.sourceChanged) {
